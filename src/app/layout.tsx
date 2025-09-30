@@ -11,7 +11,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col items-center">
+      <body>
         <ConfigProvider
           theme={{
             token: {
@@ -28,7 +28,7 @@ export default function RootLayout({
         >
 
 
-          <Header/>
+          <Header />
           {children}
         </ConfigProvider>
       </body>
