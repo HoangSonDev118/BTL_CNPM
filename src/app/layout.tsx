@@ -2,6 +2,7 @@ import "./globals.css";
 import '../lib/fontawesome';
 import Header from "@/components/Header";
 import { ConfigProvider } from "antd";
+import Footer from "@/components/Footer";
 
 
 export default function RootLayout({
@@ -11,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen flex flex-col">
         <ConfigProvider
           theme={{
             token: {
@@ -30,6 +31,7 @@ export default function RootLayout({
 
           <Header />
           {children}
+          <Footer/>
         </ConfigProvider>
       </body>
     </html>
