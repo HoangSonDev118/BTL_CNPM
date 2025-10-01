@@ -6,7 +6,7 @@ const Footer = () => {
     return (
         <div className='flex flex-col mt-30'>
             <div className="bg-[url('/assets/bg4.png')] bg-repeat-x h-2"></div>
-            <div className='bg-[#cccc] py-10 '>
+            <div className='bg-[#f2f2f2] py-10 '>
                 <div className='grid grid-cols-4 max-w-[1200px] mx-auto gap-5'>
                     <div className='py-5 '>
                         <div className=' flex items-center gap-5'>

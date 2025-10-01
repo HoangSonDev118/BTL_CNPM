@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react'
 
-import { Dropdown, Input, Select, Space } from 'antd';
+import { Dropdown, Input, MenuProps, Select, Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBagShopping, faSearch, faUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
