@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* @font-face {
+  font-family: "LinotteBold";
+  src: url("/fonts/Linotte-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+* {
+  font-family: "LinotteBold", sans-serif;
+} */
+
+
+
+*{
+  font-weight: bold;
+  box-sizing: border-box;
+}
