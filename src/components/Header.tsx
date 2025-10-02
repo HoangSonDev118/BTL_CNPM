@@ -12,7 +12,7 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
-const { Search } = Input;
+const { Search } =Input;
 
 const Header = () => {
   const [open, setOpen] = useState(false);
