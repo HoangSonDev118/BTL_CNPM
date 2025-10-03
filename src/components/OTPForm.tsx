@@ -36,7 +36,7 @@ const OTPForm = () => {
 
             <div className='flex colu flex-col items-stretch w-full px-20 gap-4'>
 
-                <img src="/logos/logo.png" className='w-15 m-auto' />
+                <img src="/logos/logo.svg" className='w-15 m-auto' />
                 <div className='mb-2'>
                     <h1 className='text-3xl text-[#96C8DD] text-center mb-2.5'>Xác nhận OTP</h1>
                     <h4 className='text-[#919191] text-[12px] text-center'>Nhập mã OTP vừa được gửi về máy bạn để khôi phục tài khoản</h4>
