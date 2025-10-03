@@ -9,13 +9,12 @@ import {
   faClock,
   faPhone,
   faShareNodes,
+  faGlobe,
+  faCameraRetro,
+  faPaperPlane,
+  faPlay,
+  type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faFacebookF,
-  faInstagram,
-  faYoutube,
-  faGooglePlusG,
-} from "@fortawesome/free-brands-svg-icons";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -88,10 +87,10 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-[#6b6b6b] mb-1">Kết nối</h4>
             <div className="flex items-center gap-3 text-lg">
-              <Social href="#" icon={faFacebookF} color="#1877f2" />
-              <Social href="#" icon={faInstagram} color="#e4405f" />
-              <Social href="#" icon={faYoutube} color="#ff0000" />
-              <Social href="#" icon={faGooglePlusG} color="#db4437" />
+              <Social href="#" icon={faGlobe} color="#0284c7" />
+              <Social href="#" icon={faCameraRetro} color="#ec4899" />
+              <Social href="#" icon={faPlay} color="#ef4444" />
+              <Social href="#" icon={faPaperPlane} color="#22c55e" />
             </div>
           </div>
         </div>
@@ -168,7 +167,7 @@ function InfoPill({
   title,
   lines,
 }: {
-  icon: any;
+  icon: IconDefinition;
   title: string;
   lines: string[];
 }) {
@@ -218,7 +217,7 @@ function Social({
   color,
 }: {
   href: string;
-  icon: any;
+  icon: IconDefinition;
   color: string;
 }) {
   return (
