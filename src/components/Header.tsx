@@ -90,7 +90,7 @@ const Header = () => {
         '
         >
           <div className='flex-2'>
-            <img src="/logos/logo.png" className='w-12' />
+            <img src="/logos/logo.svg" className='w-12' />
           </div>
 
           <div className='flex-6'>
@@ -146,7 +146,7 @@ const Header = () => {
 
 
         <span className='mx-10'>
-          <img src="/logos/logo.png" className='w-12' />
+          <img src="/logos/logo.svg" className='w-12' />
         </span>
 
         <span>Sách đang ưu đãi</span>

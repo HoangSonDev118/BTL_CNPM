@@ -52,7 +52,7 @@ const Footer = () => {
                 <div className='grid grid-cols-4 max-w-[1200px] mx-auto gap-10 border-t-1 border-[#cccc] mt-5 pt-5'>
                     <div className='py-5 '>
                         <div className='flex items-end gap-5'>
-                            <img src="/logos/logo.png" alt="" className='w-[100px]' />
+                            <img src="/logos/logo.svg" alt="" className='w-[100px]' />
                             <span className='text-[22px]'>Enfants Books</span>
                         </div>
                         <span className='text-[14px] mt-2 block'>
