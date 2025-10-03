@@ -25,7 +25,7 @@ const ForgotPasswordForm = () => {
 
             <div className='flex colu flex-col items-stretch w-full px-20 gap-4'>
 
-                <img src="/logos/logo.png" className='w-15 m-auto' />
+                <img src="/logos/logo.svg" className='w-15 m-auto' />
                 <div className='mb-2'>
                     <h1 className='text-3xl text-[#96C8DD] text-center mb-2.5'>Quên mật khẩu</h1>
                     <h4 className='text-[#919191] text-[12px] text-center'>Nhập Email/SĐT để nhận mã OTP</h4>
