@@ -11,9 +11,77 @@
   font-family: "LinotteBold", sans-serif;
 } */
 
-
-
-*{
+* {
   font-weight: bold;
   box-sizing: border-box;
 }
+
+body {
+  color: #535353;
+}
+
+.slick-prev::after,
+.slick-next::after {
+  display: none !important;
+}
+
+
+.separation {
+  width: 100%;
+  height: 45px;
+  background-color: #96C8DD;
+  /* margin: 50px 0; */
+  text-align: center;
+  line-height: 45px;
+  font-size: 16px;
+
+}
+
+.separation i {
+  margin: 0 5px;
+}
+
+.separation a {
+  transform-origin: top;
+  display: none;
+  color: white;
+  text-decoration: none;
+}
+
+.separation-active {
+  display: block !important;
+  animation: switchLine .3s linear forwards;
+}
+
+
+
+@keyframes switchLine {
+  0% {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: rotateX(360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes zoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.zoom-anim {
+  animation: zoom 1s ease-in-out infinite;
+}
+
+
+/* .footer-top-head-icon{
+  w-10 text-[white] flex items-center justify-center aspect-square text-[22px] rounded-[50%]
+  width: 40;
+} */
