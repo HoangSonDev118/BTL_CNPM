@@ -1,47 +1,19 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import crypto from "crypto";
 
-type StoredUser = {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  passwordHash: string;
-  createdAt: string;
-};
+import type { User } from "@prisma/client";
 
-export type PublicUser = Pick<StoredUser, "id" | "name" | "email" | "phone" | "createdAt">;
+import { prisma } from "./prisma";
 
-const USERS_FILE_PATH = path.join(process.cwd(), "data", "users.json");
+export type PublicUser = Pick<User, "id" | "name" | "email" | "phone" | "createdAt">;
+
 const TOKEN_COOKIE = "auth_token";
 const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
-async function ensureDataFile() {
-  await fs.mkdir(path.dirname(USERS_FILE_PATH), { recursive: true });
-  try {
-    await fs.access(USERS_FILE_PATH);
-  } catch (error) {
-    await fs.writeFile(USERS_FILE_PATH, "[]", "utf8");
-  }
-}
-
-export async function readUsers(): Promise<StoredUser[]> {
-  await ensureDataFile();
-  const file = await fs.readFile(USERS_FILE_PATH, "utf8");
-  return JSON.parse(file) as StoredUser[];
-}
-
-export async function writeUsers(users: StoredUser[]) {
-  await ensureDataFile();
-  await fs.writeFile(USERS_FILE_PATH, JSON.stringify(users, null, 2), "utf8");
-}
-
-export function toPublicUser(user: StoredUser): PublicUser {
-  const { passwordHash: _password, ...rest } = user;
-  return rest;
+export function toPublicUser(user: User): PublicUser {
+  const { id, name, email, phone, createdAt } = user;
+  return { id, name, email, phone, createdAt };
 }
 
 export function hashPassword(password: string, salt?: string) {
@@ -125,7 +97,7 @@ export function verifyJwt(token: string): TokenPayload {
   return payload;
 }
 
-export async function createSession(user: StoredUser) {
+export async function createSession(user: User) {
   const token = signJwt({ userId: user.id });
   const response = NextResponse.json({ user: toPublicUser(user) });
   response.cookies.set(TOKEN_COOKIE, token, {
@@ -159,8 +131,7 @@ export async function getAuthenticatedUser(): Promise<PublicUser | null> {
 
   try {
     const payload = verifyJwt(token);
-    const users = await readUsers();
-    const user = users.find((entry) => entry.id === payload.userId);
+    const user = await prisma.user.findUnique({ where: { id: payload.userId } });
     return user ? toPublicUser(user) : null;
   } catch (error) {
     return null;
