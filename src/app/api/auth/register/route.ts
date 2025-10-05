@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
-
-import { createSession, hashPassword, toPublicUser } from "@/lib/auth";
+import {
+  asAuthUserRecord,
+  authUserSelect,
+  createSession,
+  hashPassword,
+  toPublicUser,
+} from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isRole, type Role } from "@/lib/roles";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
@@ -9,8 +15,13 @@ export async function POST(request: Request) {
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const password = typeof body.password === "string" ? body.password : "";
   const phoneRaw = typeof body.phone === "string" ? body.phone.trim() : "";
-  const phone = phoneRaw ? phoneRaw : undefined;
+  const phone = phoneRaw ? phoneRaw : null;
   const requestId = request.headers.get("x-request-id") ?? undefined;
+  const requestedRole = body.role;
+  const allowedRegistrationRoles: Role[] = ["USER", "STAFF"];
+  const role = isRole(requestedRole) && allowedRegistrationRoles.includes(requestedRole)
+    ? requestedRole
+    : "USER";
 
   try {
     if (!name || !email || !password) {
@@ -45,10 +56,11 @@ export async function POST(request: Request) {
         email,
         phone,
         passwordHash: hashPassword(password),
+        role,
       },
     });
 
-    return createSession(newUser);
+    return createSession(asAuthUserRecord(newUser));
   } catch (error) {
     const serializedError =
       error instanceof Error
@@ -69,6 +81,8 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const users = await prisma.user.findMany();
-  return NextResponse.json({ users: users.map(toPublicUser) });
+  const users = await prisma.user.findMany({ select: authUserSelect });
+  return NextResponse.json({
+    users: users.map((user) => toPublicUser(asAuthUserRecord(user))),
+  });
 }

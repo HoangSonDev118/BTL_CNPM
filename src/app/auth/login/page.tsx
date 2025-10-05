@@ -37,9 +37,17 @@ const LoginPage = () => {
         throw new Error((data as { message?: string }).message ?? "Đăng nhập thất bại");
       }
 
+      const data = (await response.json()) as { user: typeof user };
+
       await refresh();
       message.success("Đăng nhập thành công!");
-      router.push("/");
+      const destination =
+        data.user?.role === "SUPER_ADMIN"
+          ? "/admin"
+          : data.user?.role === "STAFF"
+            ? "/admin/staff"
+            : "/";
+      router.push(destination);
     } catch (error) {
       const err = error as Error;
       message.error(err.message);
@@ -50,7 +58,13 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace("/");
+      const destination =
+        user.role === "SUPER_ADMIN"
+          ? "/admin"
+          : user.role === "STAFF"
+            ? "/admin/staff"
+            : "/";
+      router.replace(destination);
     }
   }, [loading, user, router]);
 

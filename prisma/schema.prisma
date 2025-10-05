@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,11 +7,96 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  STAFF
+  SUPER_ADMIN
+}
+
 model User {
   id           String   @id @default(uuid())
   name         String
   email        String   @unique
   phone        String?
   passwordHash String
+  role         Role     @default(USER)
   createdAt    DateTime @default(now())
+}
+
+// Danh mục sách
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique // URL-friendly: "sach-thieu-nhi"
+  description String?
+  image       String?  // URL ảnh danh mục
+  books       Book[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Tác giả
+model Author {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  biography   String?  @db.Text
+  avatar      String?  // URL ảnh tác giả
+  books       Book[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Sách
+model Book {
+  id             String      @id @default(uuid())
+  title          String
+  slug           String      @unique // URL-friendly
+  description    String?     @db.Text
+  price          Decimal     @db.Decimal(10, 2) // Giá bán
+  originalPrice  Decimal?    @db.Decimal(10, 2) // Giá gốc (để tính % giảm)
+  stock          Int         @default(0) // Số lượng tồn kho
+  publishYear    Int?        // Năm xuất bản
+  publisher      String?     // Nhà xuất bản
+  pages          Int?        // Số trang
+  language       String      @default("vi") // Ngôn ngữ: vi, en
+  isbn           String?     @unique // Mã ISBN
+  coverImage     String?     // Ảnh bìa chính
+  isActive       Boolean     @default(true) // Hiển thị hay ẩn
+  isFeatured     Boolean     @default(false) // Sản phẩm nổi bật
+  viewCount      Int         @default(0) // Lượt xem
+  soldCount      Int         @default(0) // Đã bán
+  
+  // Relations
+  authorId       String
+  author         Author      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  categoryId     String
+  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  images         BookImage[]
+  
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  
+  @@index([slug])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([isActive])
+  @@index([isFeatured])
+}
+
+// Ảnh sách (nhiều ảnh cho 1 cuốn sách)
+model BookImage {
+  id        String   @id @default(uuid())
+  url       String   // URL ảnh
+  alt       String?  // Mô tả ảnh (SEO)
+  order     Int      @default(0) // Thứ tự hiển thị
+  
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([bookId])
 }

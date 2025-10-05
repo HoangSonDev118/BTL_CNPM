@@ -16,12 +16,13 @@ import {
   faStar,
   type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
-import { Carousel } from 'antd';
+import { Carousel, Spin, message } from 'antd';
 import type { CarouselRef } from 'antd/es/carousel';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ButtonComponent from '@/components/ButtonComponent';
-import CardComponent, { ProductCard } from '@/components/CardComponent';
+import CardComponent, { type ProductCard } from '@/components/CardComponent';
+import type { Book, ShowcaseData } from '@/types/book';
 
 type Accent = 'sky' | 'rose' | 'amber' | 'emerald';
 
@@ -111,118 +112,6 @@ const contactOptions: ContactOption[] = [
   },
 ];
 
-const curatedProducts: ProductCard[] = [
-  {
-    title: 'Wonderella - Bộ 4 cuốn tác giả Alicia Vu',
-    image: 'https://pos.nvncdn.com/5679e9-27451/ps/20240802_pU1MWRnInV.jpeg?v=1722566740',
-    price: '640.000 đ',
-    originalPrice: '820.000 đ',
-    tag: 'Bán chạy',
-    accent: 'sky' as Accent,
-    rating: 4.9,
-  },
-  {
-    title: 'Nhật ký cảm xúc đầu đời',
-    image: 'https://images.unsplash.com/photo-1529079010405-a95b4e0f45d9?auto=format&fit=crop&w=640&q=80',
-    price: '185.000 đ',
-    originalPrice: '210.000 đ',
-    tag: 'Mới ra mắt',
-    accent: 'rose' as Accent,
-    rating: 4.7,
-  },
-  {
-    title: 'Hộp truyện tương tác mùa lễ hội',
-    image: 'https://images.unsplash.com/photo-1529653762956-b0a27278529d?auto=format&fit=crop&w=640&q=80',
-    price: '420.000 đ',
-    originalPrice: '510.000 đ',
-    tag: 'Quà tặng',
-    accent: 'amber' as Accent,
-    rating: 4.8,
-  },
-  {
-    title: 'Chuyến phiêu lưu của Mimi & Tom',
-    image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=640&q=80',
-    price: '265.000 đ',
-    accent: 'emerald' as Accent,
-    rating: 4.6,
-  },
-  {
-    title: 'Workbook song ngữ: Start to Read',
-    image: 'https://images.unsplash.com/photo-1455885666463-1bbac6cc6d0d?auto=format&fit=crop&w=640&q=80',
-    price: '199.000 đ',
-    originalPrice: '249.000 đ',
-    accent: 'sky' as Accent,
-    rating: 4.5,
-  },
-  {
-    title: 'Combo Montessori khám phá khoa học',
-    image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=640&q=80',
-    price: '560.000 đ',
-    tag: 'Giới hạn',
-    accent: 'emerald' as Accent,
-    rating: 4.9,
-  },
-  {
-    title: 'Cổ tích kể bé nghe trước giờ ngủ',
-    image: 'https://images.unsplash.com/photo-1535905496755-26ae35c09d1b?auto=format&fit=crop&w=640&q=80',
-    price: '145.000 đ',
-    accent: 'rose' as Accent,
-    rating: 4.4,
-  },
-  {
-    title: 'Puzzle kể chuyện: Hành tinh xanh',
-    image: 'https://images.unsplash.com/photo-1603251579431-8041402bdeda?auto=format&fit=crop&w=640&q=80',
-    price: '320.000 đ',
-    originalPrice: '370.000 đ',
-    accent: 'amber' as Accent,
-    rating: 4.7,
-  },
-  {
-    title: 'Art Lab – 52 hoạt động nghệ thuật',
-    image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=640&q=80',
-    price: '380.000 đ',
-    accent: 'sky' as Accent,
-    rating: 4.8,
-  },
-  {
-    title: 'Hộp thẻ kỹ năng cảm xúc EQ',
-    image: 'https://images.unsplash.com/photo-1455885666463-1bbac6cc6d0d?auto=format&fit=crop&w=640&q=80',
-    price: '280.000 đ',
-    accent: 'emerald' as Accent,
-    rating: 4.6,
-  },
-];
-
-const showcases: Showcase[] = [
-  {
-    id: 'spotlight',
-    title: 'Sản phẩm nổi bật',
-    subtitle: 'Danh sách lựa chọn bởi đội ngũ biên tập Enfants Books dành cho mùa lễ hội.',
-    accent: 'sky',
-    background: 'from-sky-50 via-white to-rose-50',
-    ctaLabel: 'Khám phá bộ sưu tập',
-    products: curatedProducts.slice(0, 6),
-  },
-  {
-    id: 'best-sellers',
-    title: 'Sản phẩm bán chạy',
-    subtitle: 'Top sách và dụng cụ học tập được yêu thích nhất tháng này.',
-    accent: 'emerald',
-    background: 'from-emerald-50 via-white to-sky-50',
-    ctaLabel: 'Xem tất cả ưu đãi',
-    products: curatedProducts.slice(2, 8),
-  },
-  {
-    id: 'promotion',
-    title: 'Ưu đãi đang diễn ra',
-    subtitle: 'Giảm giá đến 35% cho bộ quà tặng & combo học liệu phát triển cảm xúc.',
-    accent: 'rose',
-    background: 'from-rose-50 via-white to-amber-50',
-    ctaLabel: 'Nhận ưu đãi ngay',
-    products: curatedProducts.slice(4),
-  },
-];
-
 const heroBanners = [
   'https://pos.nvncdn.com/5679e9-27451/bn/20250523_CpU3AO5i.gif?v=1747974773',
   'https://pos.nvncdn.com/5679e9-27451/bn/20250520_u0tk6AVL.gif?v=1747711112',
@@ -238,6 +127,53 @@ const partnerLogos = [
   '/assets/cp5.jpeg',
   '/assets/cp6.png',
 ];
+
+// Convert Book to ProductCard
+const bookToProductCard = (book: Book): ProductCard => {
+  const accentMap: Record<string, Accent> = {
+    'sach-thieu-nhi': 'sky',
+    'van-hoc': 'rose',
+    'kinh-te': 'amber',
+    'ky-nang-song': 'emerald',
+    'khoa-hoc-cong-nghe': 'sky',
+  };
+
+  const accent = accentMap[book.category.slug] || 'sky';
+  
+  // Format giá
+  const formatPrice = (price: string) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(parseFloat(price));
+  };
+
+  // Tính rating dựa trên số lượng bán và lượt xem
+  const calculateRating = () => {
+    const baseRating = 4.0;
+    const soldFactor = Math.min(book.soldCount / 100, 0.8);
+    const viewFactor = Math.min(book.viewCount / 1000, 0.2);
+    return Math.min(baseRating + soldFactor + viewFactor, 5.0);
+  };
+
+  // Xác định tag
+  let tag = undefined;
+  if (book.isFeatured) tag = 'Nổi bật';
+  else if (book.soldCount > 50) tag = 'Bán chạy';
+  else if (book.originalPrice && book.discount && book.discount > 20) tag = 'Giảm giá';
+
+  return {
+    id: book.id,
+    title: book.title,
+    slug: book.slug,
+    image: book.coverImage || 'https://via.placeholder.com/400x600?text=No+Image',
+    price: formatPrice(book.price),
+    originalPrice: book.originalPrice ? formatPrice(book.originalPrice) : undefined,
+    tag,
+    accent,
+    rating: parseFloat(calculateRating().toFixed(1)),
+  };
+};
 
 const chunkProducts = <T,>(items: T[], chunkSize: number) => {
   const chunked: T[][] = [];
@@ -292,27 +228,33 @@ const ProductCarousel: React.FC<{ showcase: Showcase }> = ({ showcase }) => {
         </div>
 
         <div className="relative">
-          <Carousel
-            dots={false}
-            draggable
-            slidesToShow={3}
-            swipeToSlide
-            ref={carouselRef}
-            responsive={[
-              { breakpoint: 1280, settings: { slidesToShow: 2 } },
-              { breakpoint: 768, settings: { slidesToShow: 1 } },
-            ] as any}
-          >
-            {slides.map((group, groupIndex) => (
-              <div key={`slide-${showcase.id}-${groupIndex}`} className="px-3">
-                <div className="grid gap-6 md:grid-cols-1">
-                  {group.map((product, index) => (
-                    <CardComponent key={`${showcase.id}-${groupIndex}-${index}`} product={product} />
-                  ))}
+          {showcase.products.length > 0 ? (
+            <Carousel
+              dots={false}
+              draggable
+              slidesToShow={3}
+              swipeToSlide
+              ref={carouselRef}
+              responsive={[
+                { breakpoint: 1280, settings: { slidesToShow: 2 } },
+                { breakpoint: 768, settings: { slidesToShow: 1 } },
+              ] as any}
+            >
+              {slides.map((group, groupIndex) => (
+                <div key={`slide-${showcase.id}-${groupIndex}`} className="px-3">
+                  <div className="grid gap-6 md:grid-cols-1">
+                    {group.map((product) => (
+                      <CardComponent key={product.id} product={product} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </Carousel>
+              ))}
+            </Carousel>
+          ) : (
+            <div className="flex h-64 items-center justify-center text-slate-500">
+              Chưa có sản phẩm nào
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center">
@@ -333,6 +275,8 @@ const ProductCarousel: React.FC<{ showcase: Showcase }> = ({ showcase }) => {
 
 export default function Home() {
   const [activeContact, setActiveContact] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [showcases, setShowcases] = useState<Showcase[]>([]);
 
   useEffect(() => {
     const rotation = setInterval(() => {
@@ -340,6 +284,65 @@ export default function Home() {
     }, 6000);
 
     return () => clearInterval(rotation);
+  }, []);
+
+  // Fetch showcase data
+  useEffect(() => {
+    const fetchShowcaseData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/books/showcase');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch showcase data');
+        }
+
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          const data: ShowcaseData = result.data;
+
+          const newShowcases: Showcase[] = [
+            {
+              id: 'featured',
+              title: 'Sản phẩm nổi bật',
+              subtitle: 'Danh sách lựa chọn bởi đội ngũ biên tập Enfants Books dành cho mùa lễ hội.',
+              accent: 'sky',
+              background: 'from-sky-50 via-white to-rose-50',
+              ctaLabel: 'Khám phá bộ sưu tập',
+              products: data.featured.map(bookToProductCard),
+            },
+            {
+              id: 'bestseller',
+              title: 'Sản phẩm bán chạy',
+              subtitle: 'Top sách và dụng cụ học tập được yêu thích nhất tháng này.',
+              accent: 'emerald',
+              background: 'from-emerald-50 via-white to-sky-50',
+              ctaLabel: 'Xem tất cả sản phẩm',
+              products: data.bestseller.map(bookToProductCard),
+            },
+            {
+              id: 'promotion',
+              title: 'Ưu đãi đang diễn ra',
+              subtitle: 'Giảm giá đến 35% cho bộ quà tặng & combo học liệu phát triển cảm xúc.',
+              accent: 'rose',
+              background: 'from-rose-50 via-white to-amber-50',
+              ctaLabel: 'Nhận ưu đãi ngay',
+              products: data.promotion.map(bookToProductCard),
+            },
+          ];
+
+          setShowcases(newShowcases);
+        }
+      } catch (error) {
+        console.error('Error fetching showcase:', error);
+        message.error('Không thể tải dữ liệu sản phẩm');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShowcaseData();
   }, []);
 
   return (
@@ -470,9 +473,15 @@ export default function Home() {
 
       <section className="w-full px-4">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-12">
-          {showcases.map((showcase) => (
-            <ProductCarousel key={showcase.id} showcase={showcase} />
-          ))}
+          {loading ? (
+            <div className="flex h-96 items-center justify-center">
+              <Spin size="large" tip="Đang tải sản phẩm..." />
+            </div>
+          ) : (
+            showcases.map((showcase) => (
+              <ProductCarousel key={showcase.id} showcase={showcase} />
+            ))
+          )}
         </div>
       </section>
 

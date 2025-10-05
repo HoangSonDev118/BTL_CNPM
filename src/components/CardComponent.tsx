@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
 export type ProductCard = {
+  id?: string;
+  slug?: string;
   title: string;
   image: string;
   price: string;
@@ -41,6 +43,8 @@ const accentStyles: Record<NonNullable<ProductCard['accent']>, { glow: string; b
 };
 
 const fallbackProduct: ProductCard = {
+  id: 'fallback-product',
+  slug: 'fallback-product',
   title: 'Wonderella - Bộ 4 cuốn tác giả Alicia Vu',
   image: 'https://pos.nvncdn.com/5679e9-27451/ps/20240802_pU1MWRnInV.jpeg?v=1722566740',
   price: '640.000 đ',

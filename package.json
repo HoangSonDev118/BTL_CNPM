@@ -3,9 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "npm run db:auto-migrate && next dev --turbopack",
     "build": "prisma generate && next build --turbopack",
-    "start": "next start"
+    "vercel:build": "prisma generate && next build --turbopack",
+    "build:local": "npm run db:auto-migrate && next build --turbopack",
+    "start": "next start",
+    "lint": "next lint",
+    "db:auto-migrate": "node scripts/auto-migrate.js",
+    "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:seed": "node scripts/init-db.js",
+    "db:create-admin": "node scripts/create-super-admin.js",
+    "db:reset": "prisma migrate reset --force && npm run db:seed",
+    "db:seed-books": "node scripts/seed-books.js",
+    "db:seed-all": "npm run db:seed && npm run db:seed-books",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.0.1",
@@ -25,7 +39,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "prisma": "^6.16.3",
+    "supabase": "^2.48.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.18 <=22.x"
   }
 }

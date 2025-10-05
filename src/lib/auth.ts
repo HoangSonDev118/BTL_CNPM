@@ -1,19 +1,60 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-
-import type { User } from "@prisma/client";
+import { Prisma, type User as PrismaUser } from "@prisma/client";
 
 import { prisma } from "./prisma";
+import { isAdminRole, SUPER_ADMIN_ROLE, isRole, type Role } from "./roles";
 
-export type PublicUser = Pick<User, "id" | "name" | "email" | "phone" | "createdAt">;
+export type AuthUserRecord = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  passwordHash: string;
+  role: Role;
+  createdAt: Date;
+};
+
+export type PublicUser = Omit<AuthUserRecord, "passwordHash">;
 
 const TOKEN_COOKIE = "auth_token";
-const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
+const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7;
 
-export function toPublicUser(user: User): PublicUser {
-  const { id, name, email, phone, createdAt } = user;
-  return { id, name, email, phone, createdAt };
+const authUserSelection = Prisma.validator<Prisma.UserDefaultArgs>()({
+  select: {
+    id: true,
+    name: true,
+    email: true,
+    phone: true,
+    passwordHash: true,
+    role: true,
+    createdAt: true,
+  },
+});
+
+export const authUserSelect = authUserSelection.select;
+
+type PrismaAuthUser = Prisma.UserGetPayload<typeof authUserSelection>;
+type PrismaUserLike = PrismaAuthUser | PrismaUser;
+
+export function asAuthUserRecord(user: PrismaUserLike): AuthUserRecord {
+  const role = isRole(user.role) ? user.role : "USER";
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    passwordHash: user.passwordHash,
+    role,
+    createdAt: user.createdAt,
+  };
+}
+
+export function toPublicUser(user: AuthUserRecord): PublicUser {
+  // loại bỏ passwordHash khi trả về client
+  const { passwordHash: _passwordHash, ...safeUser } = user;
+  return safeUser;
 }
 
 export function hashPassword(password: string, salt?: string) {
@@ -26,9 +67,7 @@ export function hashPassword(password: string, salt?: string) {
 
 export function verifyPassword(password: string, stored: string) {
   const [salt] = stored.split(":");
-  if (!salt) {
-    return false;
-  }
+  if (!salt) return false;
   const verify = hashPassword(password, salt);
   return verify === stored;
 }
@@ -38,21 +77,14 @@ function base64UrlEncode(input: string) {
 }
 
 function signJwt(payload: Record<string, unknown>, ttlSeconds = TOKEN_TTL_SECONDS) {
-  const header = { alg: "HS256", typ: "JWT" };
+  const header = { alg: "HS256", typ: "JWT" } as const;
   const issuedAt = Math.floor(Date.now() / 1000);
-  const body = {
-    ...payload,
-    iat: issuedAt,
-    exp: issuedAt + ttlSeconds,
-  };
+  const body = { ...payload, iat: issuedAt, exp: issuedAt + ttlSeconds };
   const unsignedToken = `${base64UrlEncode(JSON.stringify(header))}.${base64UrlEncode(
     JSON.stringify(body)
   )}`;
   const secret = process.env.AUTH_SECRET ?? "insecure-dev-secret";
-  const signature = crypto
-    .createHmac("sha256", secret)
-    .update(unsignedToken)
-    .digest("base64url");
+  const signature = crypto.createHmac("sha256", secret).update(unsignedToken).digest("base64url");
   return `${unsignedToken}.${signature}`;
 }
 
@@ -85,7 +117,6 @@ export function verifyJwt(token: string): TokenPayload {
   if (actualBuffer.length !== expectedBuffer.length) {
     throw new Error("Token signature mismatch");
   }
-
   if (!crypto.timingSafeEqual(actualBuffer, expectedBuffer)) {
     throw new Error("Token signature mismatch");
   }
@@ -97,7 +128,7 @@ export function verifyJwt(token: string): TokenPayload {
   return payload;
 }
 
-export async function createSession(user: User) {
+export async function createSession(user: AuthUserRecord) {
   const token = signJwt({ userId: user.id });
   const response = NextResponse.json({ user: toPublicUser(user) });
   response.cookies.set(TOKEN_COOKIE, token, {
@@ -125,15 +156,51 @@ export function destroySessionResponse() {
 export async function getAuthenticatedUser(): Promise<PublicUser | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(TOKEN_COOKIE)?.value;
-  if (!token) {
-    return null;
-  }
+  if (!token) return null;
 
   try {
     const payload = verifyJwt(token);
-    const user = await prisma.user.findUnique({ where: { id: payload.userId } });
-    return user ? toPublicUser(user) : null;
-  } catch (error) {
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: authUserSelect,
+    });
+    return user ? toPublicUser(asAuthUserRecord(user)) : null;
+  } catch {
     return null;
   }
+}
+
+export class UnauthorizedError extends Error {
+  constructor(message = "Unauthorized") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor(message = "Forbidden") {
+    super(message);
+    this.name = "ForbiddenError";
+  }
+}
+
+export async function requireAuthenticatedUser() {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new UnauthorizedError();
+  return user;
+}
+
+export async function requireRole(role: Role | Role[]) {
+  const user = await requireAuthenticatedUser();
+  const allowedRoles = Array.isArray(role) ? role : [role];
+  if (!allowedRoles.includes(user.role)) throw new ForbiddenError();
+  return user;
+}
+
+export function isAdmin(user: PublicUser | null): boolean {
+  return !!user && isAdminRole(user.role);
+}
+
+export function isSuperAdmin(user: PublicUser | null): boolean {
+  return user?.role === SUPER_ADMIN_ROLE;
 }

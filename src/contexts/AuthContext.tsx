@@ -10,12 +10,15 @@ import {
   type ReactNode,
 } from "react";
 
+import type { Role } from "@/lib/roles";
+
 type AuthUser = {
   id: string;
   name: string;
   email: string;
   phone?: string;
   createdAt: string;
+  role: Role;
 };
 
 type AuthContextValue = {
@@ -23,6 +26,7 @@ type AuthContextValue = {
   loading: boolean;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
+  hasRole: (...roles: AuthUser["role"][]) => boolean;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -73,6 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       refresh: fetchProfile,
       logout,
+      hasRole: (...roles: AuthUser["role"][]) =>
+        roles.some((role) => (user ? user.role === role : false)),
     }),
     [user, loading, fetchProfile, logout]
   );

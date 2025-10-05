@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { Dropdown, Input, MenuProps, Space, message } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,6 +11,7 @@ import {
   faRightFromBracket,
   faSearch,
   faUser,
+  faGaugeHigh,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,6 +21,11 @@ const { Search } = Input;
 const Header = () => {
   const [open, setOpen] = useState(false);
   const { user, loading, logout } = useAuth();
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
 
   const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
     if (key === "logout") {
@@ -27,6 +34,22 @@ const Header = () => {
     }
     setOpen(false);
   };
+
+  const adminMenuItems: MenuProps["items"] =
+    user && (user.role === "SUPER_ADMIN" || user.role === "STAFF")
+      ? [
+          { type: "divider" as const },
+          {
+            key: "admin",
+            icon: <FontAwesomeIcon icon={faGaugeHigh} />,
+            label: (
+              <Link className="text-[15px]" href={user.role === "SUPER_ADMIN" ? "/admin" : "/admin/staff"}>
+                {user.role === "SUPER_ADMIN" ? "Trung tâm quản trị" : "Khu vực nhân viên"}
+              </Link>
+            ),
+          },
+        ]
+      : [];
 
   const accountMenu: MenuProps["items"] = user
     ? [
@@ -40,11 +63,12 @@ const Header = () => {
           ),
           disabled: true,
         },
+        ...adminMenuItems,
         { type: "divider" as const },
         {
           key: "logout",
           label: <span className="text-[15px]">Đăng xuất</span>,
-          icon: <FontAwesomeIcon icon={faRightFromBracket} />, 
+          icon: <FontAwesomeIcon icon={faRightFromBracket} />,
           danger: true,
         },
       ]

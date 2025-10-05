@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import "../lib/fontawesome";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -18,6 +19,11 @@ import {
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <footer className="w-full bg-[#f1f1f1] text-[#555] mt-10">
@@ -104,14 +110,13 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-3">
               <img src="/logos/logo.svg" alt="logo" className="w-10 h-10" />
               <div className="text-[#e85757] font-extrabold text-xl">
-                CRABIT <span className="text-[#6b6b6b] font-bold">kidbooks</span>
+                Enfants <span className="text-[#6b6b6b] font-bold">Books</span>
               </div>
             </div>
             <p className="text-sm leading-6">
-              Crabit Kidbooks là nhà phát hành sách thiếu nhi thuộc Công ty
-              CPTM & XNK Ngọc Ánh – đơn vị hơn 20 năm kinh nghiệm trong ngành
+              Enfants là nhà phát hành sách thiếu nhi thuộc Công ty 4TV – đơn vị hơn 20 năm kinh nghiệm trong ngành
               in ấn và là đối tác uy tín cung cấp học liệu, sách vở học sinh
-              cho hơn 5000 khách hàng khắp 28 tỉnh thành phía Bắc Việt Nam.
+              cho hơn 8 tỉ khách hàng khắp thế giới.
             </p>
           </div>
 
@@ -155,7 +160,7 @@ export default function Footer() {
       {/* BLOCK 4: Copyright */}
       <section className="bg-[#f05a5a] text-white">
         <div className="max-w-6xl mx-auto px-4 py-3 text-center text-sm">
-          Copyright Crabit © 2018. All Rights Reserved
+          Copyright Enfants © 2025. All Rights Reserved
         </div>
       </section>
     </footer>

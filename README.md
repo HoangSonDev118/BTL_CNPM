@@ -14,6 +14,13 @@ pnpm dev
 bun dev
 ```
 
+### Database migrations
+
+The build pipeline runs Prisma migrations. If your `DATABASE_URL` points to a database that is not reachable from your current
+environment (for example when working offline), the migration step is skipped with a warning so that `npm run build` can finish
+successfully. When you do have access to the database, rerun `npm run build` (or execute `npx prisma migrate deploy` manually)
+to make sure your schema stays up to date.
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
