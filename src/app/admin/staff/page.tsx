@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+=======
+import { redirect } from "next/navigation";
+import StaffLayout from "./_components/StaffLayout";
+import StaffDashboard from "./_components/StaffDashboard";
+>>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 import { getAuthenticatedUser } from "@/lib/auth";
 import { SUPER_ADMIN_ROLE } from "@/lib/roles";
 
@@ -20,6 +26,7 @@ export default async function StaffDashboardPage() {
   }
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen bg-[#f5f7fb] px-4 py-12">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
         <header className="flex flex-col gap-3 rounded-3xl bg-white px-8 py-6 shadow-lg md:flex-row md:items-center md:justify-between">
@@ -78,3 +85,10 @@ export default async function StaffDashboardPage() {
     </div>
   );
 }
+=======
+    <StaffLayout>
+      <StaffDashboard />
+    </StaffLayout>
+  );
+}
+>>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)

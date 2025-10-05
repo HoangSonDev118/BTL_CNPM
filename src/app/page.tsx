@@ -1,5 +1,6 @@
-'use client'
+"use client";
 
+<<<<<<< HEAD
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowRight,
@@ -23,9 +24,26 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ButtonComponent from '@/components/ButtonComponent';
 import CardComponent, { type ProductCard } from '@/components/CardComponent';
 import type { Book, ShowcaseData } from '@/types/book';
+=======
+import { useEffect, useState, useRef } from "react";
+import { Carousel, Spin, message } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { CarouselRef } from "antd/es/carousel";
+import CardComponent from "@/components/CardComponent";
+import ButtonComponent from "@/components/ButtonComponent";
+import type { Book, ShowcaseData } from "@/types/book";
 
-type Accent = 'sky' | 'rose' | 'amber' | 'emerald';
+export default function HomePage() {
+  const [showcaseData, setShowcaseData] = useState<ShowcaseData | null>(null);
+  const [loading, setLoading] = useState(true);
+>>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
+  // Banner carousel
+  const bannerCarouselRef = useRef<CarouselRef | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+<<<<<<< HEAD
 type Showcase = {
   id: string;
   title: string;
@@ -277,15 +295,23 @@ export default function Home() {
   const [activeContact, setActiveContact] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showcases, setShowcases] = useState<Showcase[]>([]);
+=======
+  // Product carousels
+  const featuredCarouselRef = useRef<CarouselRef | null>(null);
+  const bestsellerCarouselRef = useRef<CarouselRef | null>(null);
+  const promotionCarouselRef = useRef<CarouselRef | null>(null);
+>>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
+  // Auto-change banner every 6 seconds
   useEffect(() => {
-    const rotation = setInterval(() => {
-      setActiveContact((prev) => (prev + 1) % contactOptions.length);
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % 4); // 4 banners
+      bannerCarouselRef.current?.next();
     }, 6000);
-
-    return () => clearInterval(rotation);
+    return () => clearInterval(interval);
   }, []);
 
+<<<<<<< HEAD
   // Fetch showcase data
   useEffect(() => {
     const fetchShowcaseData = async () => {
@@ -348,116 +374,322 @@ export default function Home() {
   return (
     <div className="relative flex w-full flex-col items-center gap-20 overflow-hidden pb-24">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(96,165,250,0.25),transparent_55%),_radial-gradient(circle_at_bottom,_rgba(244,114,182,0.2),transparent_60%)]" />
+=======
+  useEffect(() => {
+    fetchShowcaseData();
+  }, []);
+>>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
-      <section className="relative w-full px-4 pt-16">
-        <div className="absolute left-1/2 top-4 h-80 w-80 -translate-x-1/2 rounded-full bg-sky-200/40 blur-[120px]" />
-        <div className="absolute right-20 top-20 hidden h-64 w-64 rounded-full bg-rose-200/40 blur-[120px] lg:block" />
-        <div className="mx-auto flex max-w-6xl flex-col gap-12 rounded-[36px] border border-white/50 bg-white/80 p-10 shadow-[0_65px_160px_-80px_rgba(15,23,42,0.5)] backdrop-blur-2xl lg:flex-row lg:items-center">
-          <div className="relative flex-1">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm uppercase tracking-[0.2em] text-slate-500 shadow-sm backdrop-blur">
-              <FontAwesomeIcon icon={faFeatherPointed} className="text-sky-500" />
-              enfants books
-            </span>
-            <h1 className="mt-6 text-4xl leading-tight text-slate-900 md:text-5xl lg:text-[52px]">
-              Nuôi dưỡng trí tưởng tượng của bé bằng những câu chuyện đầy cảm hứng
+  const fetchShowcaseData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/books/showcase");
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch showcase data");
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setShowcaseData(result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching showcase:", error);
+      message.error("Không thể tải dữ liệu trang chủ");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const bookToProductCard = (book: Book) => {
+    const formatPrice = (price: string) => {
+      return new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(parseFloat(price));
+    };
+
+    const accentMap: Record<string, any> = {
+      "sach-thieu-nhi": "sky",
+      "van-hoc": "rose",
+      "kinh-te": "amber",
+      "ky-nang-song": "emerald",
+      "khoa-hoc-cong-nghe": "sky",
+    };
+
+    const calculateRating = () => {
+      const baseRating = 4.0;
+      const soldFactor = Math.min(book.soldCount / 100, 0.8);
+      const viewFactor = Math.min(book.viewCount / 1000, 0.2);
+      return Math.min(baseRating + soldFactor + viewFactor, 5.0);
+    };
+
+    let tag = undefined;
+    if (book.isFeatured) tag = "Nổi bật";
+    else if (book.soldCount > 50) tag = "Bán chạy";
+    else if (book.discount && book.discount > 20) tag = "Giảm giá";
+
+    return {
+      id: book.id,
+      title: book.title,
+      slug: book.slug,
+      image: book.coverImage || "https://via.placeholder.com/400x600?text=No+Image",
+      price: formatPrice(book.price),
+      originalPrice: book.originalPrice ? formatPrice(book.originalPrice) : undefined,
+      tag,
+      accent: accentMap[book.category.slug] || "sky",
+      rating: parseFloat(calculateRating().toFixed(1)),
+    };
+  };
+
+  const handleBannerPrev = () => {
+    bannerCarouselRef.current?.prev();
+  };
+
+  const handleBannerNext = () => {
+    bannerCarouselRef.current?.next();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" tip="Đang tải..." />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      {/* Hero Banner Carousel */}
+      <section className="max-w-[1200px] w-full relative mb-10">
+        <Carousel 
+          ref={bannerCarouselRef}
+          draggable 
+          swipeToSlide 
+          autoplay 
+          autoplaySpeed={6000}
+          beforeChange={(current, next) => setActiveIndex(next)}
+        >
+          <div>
+            <img 
+              src="https://pos.nvncdn.com/5679e9-27451/bn/20250523_CpU3AO5i.gif?v=1747974773" 
+              alt="Banner 1"
+              className="w-full h-auto"
+            />
+          </div>
+          <div>
+            <img 
+              src="https://pos.nvncdn.com/5679e9-27451/bn/20250520_u0tk6AVL.gif?v=1747711112" 
+              alt="Banner 2"
+              className="w-full h-auto"
+            />
+          </div>
+          <div>
+            <img 
+              src="https://pos.nvncdn.com/5679e9-27451/bn/20250107_HRZhQmSo.gif?v=1736241946" 
+              alt="Banner 3"
+              className="w-full h-auto"
+            />
+          </div>
+          <div>
+            <img 
+              src="https://pos.nvncdn.com/5679e9-27451/bn/20240717_vdHNhklV.gif?v=1721205944" 
+              alt="Banner 4"
+              className="w-full h-auto"
+            />
+          </div>
+        </Carousel>
+
+        <section className="max-w-[1200px] w-full py-16 px-6">
+          <div className="text-center bg-gradient-to-r from-sky-50 via-white to-rose-50 rounded-3xl p-12 shadow-lg">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-sky-600 to-rose-600 bg-clip-text text-transparent mb-4">
+              Chào mừng đến với Enfants Books
             </h1>
-            <p className="mt-5 max-w-2xl text-base text-slate-600 md:text-lg">
-              Bộ sưu tập sách thiếu nhi, học liệu và hoạt động nghệ thuật được tuyển chọn kỹ càng để đồng hành cùng từng giai đoạn phát triển.
+            <p className="text-xl md:text-2xl text-slate-700 font-medium">
+              Nơi nâng tầm tri thức cho trẻ từ <span className="text-sky-600 font-bold">0 - 12 tuổi</span>
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <div className="min-w-[220px]">
-                <ButtonComponent
-                  type="primary"
-                  content={(
-                    <>
-                      <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
-                      <span>Khám phá ngay</span>
-                    </>
-                  )}
-                />
-              </div>
-              <div className="min-w-[220px]">
-                <ButtonComponent
-                  type="secondary"
-                  content={(
-                    <>
-                      <FontAwesomeIcon icon={faLightbulb} className="text-sm text-amber-500" />
-                      <span>Tư vấn chọn sách cho bé</span>
-                    </>
-                  )}
-                />
-              </div>
-            </div>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {heroHighlights.map((highlight) => (
-                <div
-                  key={highlight.id}
-                  className={`glass-panel group flex h-full flex-col gap-3 rounded-2xl border border-white/40 p-5 text-left shadow-[0_30px_80px_-60px_rgba(15,23,42,0.55)] transition duration-500 hover:-translate-y-2 hover:shadow-[0_40px_90px_-50px_rgba(59,130,246,0.35)] ${accentBadgeStyles[highlight.accent]}`}
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/70 text-xl text-slate-600 shadow-inner">
-                    <FontAwesomeIcon icon={highlight.icon} />
-                  </span>
-                  <h3 className="text-lg text-slate-800">{highlight.title}</h3>
-                  <p className="text-sm leading-relaxed text-slate-600">{highlight.description}</p>
-                </div>
-              ))}
-            </div>
           </div>
+        </section>
 
-          <div className="relative flex w-full flex-1 items-center justify-center">
-            <div className="floating-blob absolute -left-10 top-6 h-40 w-40 rounded-full bg-sky-300/40" />
-            <div className="floating-blob absolute -right-8 bottom-10 h-32 w-32 rounded-full bg-rose-300/40" />
-            <div className="relative w-full max-w-xl overflow-hidden rounded-[32px] border border-white/40 bg-white/70 shadow-[0_45px_120px_-60px_rgba(79,70,229,0.35)] backdrop-blur-xl">
-              <Carousel autoplay autoplaySpeed={5000} draggable swipeToSlide className="hero-carousel">
-                {heroBanners.map((banner, index) => (
-                  <div key={`banner-${index}`} className="relative">
-                    <img src={banner} alt={`Hero banner ${index + 1}`} className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
-                  </div>
-                ))}
-              </Carousel>
-            </div>
-          </div>
-        </div>
-      </section>
+        {/* Navigation Arrows */}
+        <button
+          className="absolute top-1/2 -translate-y-1/2 left-4 z-10 bg-white/80 hover:bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all"
+          onClick={handleBannerPrev}
+        >
+          <FontAwesomeIcon icon={faChevronLeft} className="text-slate-700" />
+        </button>
+        <button
+          className="absolute top-1/2 -translate-y-1/2 right-4 z-10 bg-white/80 hover:bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all"
+          onClick={handleBannerNext}
+        >
+          <FontAwesomeIcon icon={faChevronRight} className="text-slate-700" />
+        </button>
 
-      <section className="contact-ribbon-container">
-        <div className="contact-ribbon">
-          {contactOptions.map((option, index) => (
-            <a
-              key={option.label}
-              className={`contact-pill ${index === activeContact ? 'is-active' : ''}`}
-              href={option.href}
-              target={option.href.startsWith('http') ? '_blank' : '_self'}
-              rel={option.href.startsWith('http') ? 'noreferrer' : undefined}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={option.icon} />
-              </div>
-              <div className="content">
-                <span>{option.label}</span>
-                <strong>{option.value}</strong>
-              </div>
-              <FontAwesomeIcon icon={faArrowRight} className="chevron" />
-            </a>
+        {/* Dots Indicator */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {[0, 1, 2, 3].map((index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setActiveIndex(index);
+                bannerCarouselRef.current?.goTo(index);
+              }}
+              className={`w-3 h-3 rounded-full transition-all ${
+                activeIndex === index 
+                  ? 'bg-white w-8' 
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+            />
           ))}
         </div>
       </section>
 
-      <section className="w-full px-4">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 rounded-[28px] border border-white/40 bg-white/80 p-10 shadow-[0_60px_140px_-90px_rgba(15,23,42,0.45)] backdrop-blur-2xl">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-1 text-xs uppercase tracking-[0.35em] text-slate-500">
-              <FontAwesomeIcon icon={faLightbulb} className="text-amber-400" />
-              Độ tuổi khuyến nghị
-            </span>
-            <h2 className="text-3xl text-slate-900 md:text-4xl">Con bạn đang thuộc độ tuổi nào?</h2>
-            <p className="max-w-2xl text-sm text-slate-500 md:text-base">
-              Chọn nhóm tuổi để Enfants Books gợi ý những tựa sách, hoạt động và học liệu phù hợp nhất.
-            </p>
+      {/* Featured Books Section */}
+      {showcaseData?.featured && showcaseData.featured.length > 0 && (
+        <section className="w-full py-20 bg-white">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">Sản phẩm nổi bật</h2>
+              <p className="text-lg text-slate-600">Những cuốn sách được yêu thích nhất</p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8">
+              {showcaseData.featured.map((book) => (
+                <CardComponent key={book.id} product={bookToProductCard(book)} />
+              ))}
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <ButtonComponent
+                content="Xem tất cả"
+                type="primary"
+                onClick={() => window.location.href = "/books?featured=true"}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Bestseller Books Section */}
+      {showcaseData?.bestseller && showcaseData.bestseller.length > 0 && (
+        <section className="w-full py-20 bg-gradient-to-br from-slate-50 to-sky-50">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">Sách bán chạy</h2>
+              <p className="text-lg text-slate-600">Top những cuốn sách được mua nhiều nhất</p>
+            </div>
+
+            <div className="relative px-12">
+              <Carousel
+                draggable
+                swipeToSlide
+                dots={false}
+                slidesToShow={5}
+                ref={bestsellerCarouselRef}
+                responsive={[
+                  { breakpoint: 1280, settings: { slidesToShow: 4 } },
+                  { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                  { breakpoint: 768, settings: { slidesToShow: 2 } },
+                  { breakpoint: 640, settings: { slidesToShow: 1 } },
+                ]}
+              >
+                {showcaseData.bestseller.map((book) => (
+                  <div key={book.id} className="px-3">
+                    <CardComponent product={bookToProductCard(book)} />
+                  </div>
+                ))}
+              </Carousel>
+              
+              <button
+                className="absolute top-1/2 -translate-y-1/2 -right-2 text-sky-500 text-4xl hover:text-sky-600 transition-colors z-10"
+                onClick={() => bestsellerCarouselRef.current?.next()}
+              >
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+              <button
+                className="absolute top-1/2 -translate-y-1/2 -left-2 text-sky-500 text-4xl hover:text-sky-600 transition-colors z-10"
+                onClick={() => bestsellerCarouselRef.current?.prev()}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <ButtonComponent
+                content="Xem tất cả"
+                type="primary"
+                onClick={() => window.location.href = "/books?sortBy=bestseller"}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Promotion Books Section */}
+      {showcaseData?.promotion && showcaseData.promotion.length > 0 && (
+        <section className="w-full py-20 bg-[#ab8585] [background-image:url('/assets/bg1.png'),url('/assets/bg2.png')] [background-position:top_left,bottom_right] [background-repeat:no-repeat,no-repeat]">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="text-center mb-12 flex justify-center items-center gap-4">
+              <h2 className="text-4xl font-bold text-white">Sản phẩm đang khuyến mãi</h2>
+              <img className="w-16 h-16 animate-pulse" src="/assets/fire.png" alt="fire" />
+            </div>
+
+            <div className="relative px-12">
+              <Carousel
+                draggable
+                swipeToSlide
+                dots={false}
+                slidesToShow={5}
+                ref={promotionCarouselRef}
+                responsive={[
+                  { breakpoint: 1280, settings: { slidesToShow: 4 } },
+                  { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                  { breakpoint: 768, settings: { slidesToShow: 2 } },
+                  { breakpoint: 640, settings: { slidesToShow: 1 } },
+                ]}
+              >
+                {showcaseData.promotion.map((book) => (
+                  <div key={book.id} className="px-3">
+                    <CardComponent product={bookToProductCard(book)} />
+                  </div>
+                ))}
+              </Carousel>
+              
+              <button
+                className="absolute top-1/2 -translate-y-1/2 -right-2 text-white text-4xl hover:text-sky-200 transition-colors z-10"
+                onClick={() => promotionCarouselRef.current?.next()}
+              >
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+              <button
+                className="absolute top-1/2 -translate-y-1/2 -left-2 text-white text-4xl hover:text-sky-200 transition-colors z-10"
+                onClick={() => promotionCarouselRef.current?.prev()}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <ButtonComponent
+                content="Xem tất cả khuyến mãi"
+                type="primary"
+                onClick={() => window.location.href = "/books"}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Categories Section */}
+      <section className="w-full py-20 bg-white">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">Danh mục sách</h2>
+            <p className="text-lg text-slate-600">Khám phá theo chủ đề yêu thích</p>
           </div>
 
+<<<<<<< HEAD
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {ageRanges.map((range) => (
               <div key={range.label} className={`age-card ${range.accent}`}>
@@ -503,6 +735,28 @@ export default function Home() {
               <div key={logo} className="partner-card">
                 <img src={logo} alt={`Đối tác ${index + 1}`} className="h-16 w-auto object-contain" />
               </div>
+=======
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {[
+              { name: "Sách Thiếu Nhi", slug: "sach-thieu-nhi", color: "sky" },
+              { name: "Văn Học", slug: "van-hoc", color: "rose" },
+              { name: "Kinh Tế", slug: "kinh-te", color: "amber" },
+              { name: "Kỹ Năng Sống", slug: "ky-nang-song", color: "emerald" },
+              { name: "Khoa Học - Công Nghệ", slug: "khoa-hoc-cong-nghe", color: "sky" },
+            ].map((category) => (
+              <a
+                key={category.slug}
+                href={`/books?category=${category.slug}`}
+                className={`group relative overflow-hidden rounded-2xl border-2 border-${category.color}-200 bg-gradient-to-br from-${category.color}-50 to-white p-8 text-center transition-all hover:shadow-xl hover:-translate-y-2`}
+              >
+                <h3 className={`text-xl font-bold text-${category.color}-900 mb-2`}>
+                  {category.name}
+                </h3>
+                <p className="text-sm text-slate-600 group-hover:text-slate-900">
+                  Khám phá ngay →
+                </p>
+              </a>
+>>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
             ))}
           </div>
         </div>

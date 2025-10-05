@@ -60,7 +60,8 @@ const CardComponent: React.FC<CardComponentProps> = ({ className = '', product =
   const rating = product.rating ?? 5;
 
   return (
-    <div
+    <a
+      href={`/books/${product.slug}`}
       className={`group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-white/40 bg-white/80 p-4 text-[#2f2f2f] shadow-[0_25px_50px_-25px_rgba(15,23,42,0.35)] backdrop-blur-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_55px_-25px_rgba(14,116,144,0.45)] ${className}`}
     >
       <div className={`pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100 ${accentStyle.glow}`} />
@@ -82,7 +83,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ className = '', product =
 
       <div className="flex flex-1 flex-col justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h3 className="text-[18px] leading-snug text-slate-800 transition-colors duration-300 group-hover:text-slate-900">
+          <h3 className="text-[16px] leading-snug text-slate-800 transition-colors duration-300 group-hover:text-slate-900 line-clamp-2 min-h-[3rem]">
             {product.title}
           </h3>
           <div className="flex items-center gap-2 text-sm text-amber-500">
@@ -96,19 +97,24 @@ const CardComponent: React.FC<CardComponentProps> = ({ className = '', product =
 
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-lg text-[#ff6a00]">{product.price}</span>
+            <span className="text-lg font-semibold text-[#ff6a00]">{product.price}</span>
             {product.originalPrice && <span className="text-xs text-slate-400 line-through">{product.originalPrice}</span>}
           </div>
           <button
             type="button"
             className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/70 text-base transition-all duration-300 hover:scale-110 hover:shadow-lg ${accentStyle.heart}`}
             aria-label="Thêm vào danh sách yêu thích"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // Handle add to wishlist
+            }}
           >
             <FontAwesomeIcon icon={faHeart} />
           </button>
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 

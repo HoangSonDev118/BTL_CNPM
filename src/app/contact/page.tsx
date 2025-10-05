@@ -207,7 +207,8 @@ const ContactPage = () => {
               </Form.Item>
               <div className="pt-2">
                 <ButtonComponent
-                  type={submitting ? 'disable' : 'primary'}
+                  type="primary"
+                  disabled={submitting}
                   content={
                     <span className="flex items-center gap-2 text-base">
                       {submitting ? 'Đang gửi...' : 'Gửi thông tin cho Enfants'}

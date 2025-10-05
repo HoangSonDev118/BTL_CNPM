@@ -1,23 +1,42 @@
-import React, { ReactNode } from "react";
+import React from 'react';
 
-type ButtonProps = {
-    content: ReactNode;   // 👈 đổi từ string sang ReactNode
-    type: "primary" | "secondary" | "disable";
-    onClick?: () => void 
-};
+type ButtonType = 'primary' | 'secondary';
 
-const ButtonComponent = ({ content, type, onClick }: ButtonProps) => {
-    const baseStyle =
-        "w-full h-12 rounded-[5px]  transition-all flex items-center justify-center gap-2";
+interface ButtonProps {
+  content: React.ReactNode;
+  type: ButtonType;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
 
-    const styles =
-        type === "primary"
-            ? "bg-[#96C8DD] text-white hover:bg-[#689aaf] cursor-pointer"
-        : type === "disable"
-            ?   "bg-[#c7c7c7] text-white cursor-not-allowed"
-            : "border-2 border-[#CDC1FF] hover:border-[#96C8DD] hover:bg-[#f0f0f0] cursor-pointer";
+const ButtonComponent: React.FC<ButtonProps> = ({ 
+  content, 
+  type, 
+  onClick,
+  disabled = false,
+  className = ''
+}) => {
+  const baseStyles = "w-full px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2";
+  
+  const typeStyles = {
+    primary: disabled 
+      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+      : "bg-gradient-to-r from-rose-500 to-pink-500 text-white hover:from-rose-600 hover:to-pink-600 hover:shadow-lg transform hover:-translate-y-0.5",
+    secondary: disabled
+      ? "bg-gray-200 text-gray-400 border border-gray-300 cursor-not-allowed"
+      : "bg-white text-rose-500 border-2 border-rose-500 hover:bg-rose-50 hover:shadow-md transform hover:-translate-y-0.5"
+  };
 
-    return <button onClick={onClick} className={`${baseStyle} ${styles}`}>{content}</button>;
+  return (
+    <button
+      className={`${baseStyles} ${typeStyles[type]} ${className}`}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+    >
+      {content}
+    </button>
+  );
 };
 
 export default ButtonComponent;

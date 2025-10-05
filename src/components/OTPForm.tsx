@@ -57,19 +57,16 @@ const OTPForm = () => {
                     <span className='italic underline text-[#96C8DD] cursor-pointer hover:text-[#689aaf] transition-all'>Bạn không nhận được mã OTP ?</span>
                 </div>
 
-
                 <ButtonComponent
-
-
                     onClick={() => console.log(otp)}
-
-
-                    content="Xác nhận" type='primary' />
+                    content="Xác nhận" 
+                    type='primary' />
                 <ButtonComponent
-
-
                     onClick={() => console.log(otp)}
-                    content="Gửi lại mã OTP" type='disable' />
+                    content="Gửi lại mã OTP" 
+                    type='secondary' 
+                    disabled={true} />
+                
 
                 <div className="flex items-center">
                     <div className="flex-grow border-t border-gray-300"></div>
