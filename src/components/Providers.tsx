@@ -17,6 +17,7 @@ export default function Providers({ children }: ProvidersProps) {
           token: {
             colorPrimary: "#96C8DD",
             fontFamily: '"LinotteBold", sans-serif',
+            fontSize: 15,
           },
         }}
       >

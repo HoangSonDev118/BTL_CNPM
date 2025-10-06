@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 @font-face {
   font-family: "LinotteBold";
@@ -10,6 +10,7 @@
 
 html, body {
   font-family: "LinotteBold", sans-serif;
+  font-size: 15px;
 }
 
 * {
