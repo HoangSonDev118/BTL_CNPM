@@ -44,7 +44,7 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
     {
       key: "profile",
       icon: <UserOutlined />,
-      label: "Thông tin cá nhân",
+      label: <span style={{ whiteSpace: "nowrap" }}>Thông tin cá nhân</span>,
     },
     {
       type: "divider" as const,
@@ -52,8 +52,7 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Đăng xuất",
-      onClick: handleLogout,
+      label: <span style={{ whiteSpace: "nowrap" }}>Đăng xuất</span>,
     },
   ];
 
@@ -149,24 +148,36 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
               height: 40,
             }}
           />
-          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, whiteSpace: "nowrap", overflow: "hidden", flexShrink: 0, maxWidth: "100%", height: 40 }}>
             <Badge count={3} size="small">
               <Button
                 type="text"
                 icon={<BellOutlined style={{ fontSize: 18 }} />}
-                style={{ width: 40, height: 40 }}
+                style={{ width: 40, height: 40, minWidth: 40 }}
               />
             </Badge>
-            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+            <Dropdown
+              menu={{
+                items: userMenuItems,
+                onClick: ({ key }) => {
+                  if (key === "logout") handleLogout();
+                },
+              }}
+              placement="bottomRight"
+              arrow
+              trigger={["click"]}
+              overlayStyle={{ minWidth: 180 }}
+            >
               <div
                 style={{
-                  display: "flex",
+                  display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
                   cursor: "pointer",
                   padding: "4px 12px",
                   borderRadius: 8,
                   transition: "all 0.2s",
+                  height: 40,
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#f5f5f5";
@@ -178,12 +189,17 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
                 <Avatar
                   style={{ backgroundColor: "#696cff" }}
                   icon={<UserOutlined />}
-                  size={36}
+                  size={32}
                 />
                 {!collapsed && (
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span style={{ fontSize: 14, fontWeight: 500 }}>{user?.name}</span>
-                    <span style={{ fontSize: 12, color: "#8c8c8c" }}>Nhân viên</span>
+                  <div style={{ display: "flex", flexDirection: "column", maxWidth: 120, minWidth: 0, lineHeight: 1 }}>
+                    <span
+                      title={user?.name}
+                      style={{ fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", lineHeight: 1 }}
+                    >
+                      {user?.name}
+                    </span>
+                    <span style={{ fontSize: 12, color: "#8c8c8c", whiteSpace: "nowrap", lineHeight: 1 }}>Nhân viên</span>
                   </div>
                 )}
               </div>

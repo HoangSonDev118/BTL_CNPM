@@ -9,11 +9,7 @@ import { prisma } from "@/lib/prisma";
  */
 export async function GET(request: Request) {
   try {
-<<<<<<< HEAD
-    const limit = 6; // Mỗi showcase lấy 6 sản phẩm
-=======
     const limit = 10; // Mỗi showcase lấy 6 sản phẩm
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
     // 1. Sản phẩm nổi bật (isFeatured = true)
     const featuredBooks = await prisma.book.findMany({

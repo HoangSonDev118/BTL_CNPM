@@ -6,12 +6,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     
     // Query parameters
-<<<<<<< HEAD
-    const featured = searchParams.get("featured") === "true";
-    const limit = parseInt(searchParams.get("limit") || "10");
-    const categorySlug = searchParams.get("category");
-    const sortBy = searchParams.get("sortBy") || "createdAt"; // createdAt, soldCount, viewCount, price
-=======
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "16");
     const featured = searchParams.get("featured") === "true";
@@ -22,7 +16,6 @@ export async function GET(request: Request) {
 
     // Calculate skip for pagination
     const skip = (page - 1) * limit;
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
     // Build where clause
     const where: any = {
@@ -39,8 +32,6 @@ export async function GET(request: Request) {
       };
     }
 
-<<<<<<< HEAD
-=======
     // Price filter
     if (minPrice || maxPrice) {
       where.price = {};
@@ -52,7 +43,6 @@ export async function GET(request: Request) {
       }
     }
 
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
     // Build orderBy
     let orderBy: any = { createdAt: "desc" };
     
@@ -73,35 +63,6 @@ export async function GET(request: Request) {
         orderBy = { createdAt: "desc" };
     }
 
-<<<<<<< HEAD
-    // Fetch books
-    const books = await prisma.book.findMany({
-      where,
-      orderBy,
-      take: limit,
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            avatar: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        images: {
-          orderBy: { order: "asc" },
-          take: 5,
-        },
-      },
-    });
-=======
     // Fetch books with pagination
     const [books, total, categories] = await Promise.all([
       prisma.book.findMany({
@@ -146,7 +107,6 @@ export async function GET(request: Request) {
 
     // Calculate total pages
     const totalPages = Math.ceil(total / limit);
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
     // Transform data
     const transformedBooks = books.map((book) => ({
@@ -176,15 +136,11 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       books: transformedBooks,
-<<<<<<< HEAD
-      total: transformedBooks.length,
-=======
       total,
       page,
       limit,
       totalPages,
       categories,
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
     });
   } catch (error) {
     console.error("[books/GET] Error:", error);

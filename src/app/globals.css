@@ -346,3 +346,187 @@ body {
     transform: translate3d(0, -12px, 0) scale(1.05);
   }
 }
+
+@keyframes fire-flicker {
+  0%, 100% { 
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  25% { 
+    transform: scale(1.2) translateY(-5px);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(0.9) translateY(5px);
+    opacity: 1;
+  }
+  75% { 
+    transform: scale(1.1) translateY(-3px);
+    opacity: 0.9;
+  }
+}
+.animate-fire-flicker {
+  animation: fire-flicker 1.5s ease-in-out infinite;
+}
+
+/* Sét rơi nhanh */
+@keyframes lightning {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+.animate-lightning {
+  animation: lightning 2s ease-in infinite;
+}
+
+/* Bùng nổ */
+@keyframes explode {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+.animate-explode {
+  animation: explode 2s ease-out infinite;
+}
+
+/* Trophy nhảy */
+@keyframes trophy-bounce {
+  0%, 100% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(10deg);
+  }
+}
+.animate-trophy-bounce {
+  animation: trophy-bounce 2s ease-in-out infinite;
+}
+
+/* Sale tag xoay */
+@keyframes sale-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.3);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+.animate-sale-spin {
+  animation: sale-spin 4s ease-in-out infinite;
+}
+
+/* Tiền rơi lắc lư */
+@keyframes money-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(50vh) rotate(180deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+.animate-money-fall {
+  animation: money-fall 6s linear infinite;
+}
+
+/* Pháo hoa nở */
+@keyframes firework {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+.animate-firework {
+  animation: firework 3s ease-out infinite;
+}
+
+/* Sao bay ngang */
+@keyframes star-fly {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+}
+.animate-star-fly {
+  animation: star-fly 5s linear infinite;
+}
+
+/* Bounce chậm */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+/* Xoay chậm */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Pulse custom */
+@keyframes pulse-custom {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+.animate-pulse-custom {
+  animation: pulse-custom 2s ease-in-out infinite;
+}

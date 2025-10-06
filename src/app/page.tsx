@@ -1,34 +1,9 @@
 "use client";
 
-<<<<<<< HEAD
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowRight,
-  faBookOpen,
-  faChevronLeft,
-  faChevronRight,
-  faCommentDots,
-  faEnvelope,
-  faFeatherPointed,
-  faGift,
-  faLightbulb,
-  faPhone,
-  faSeedling,
-  faStar,
-  type IconDefinition,
-} from '@fortawesome/free-solid-svg-icons';
-import { Carousel, Spin, message } from 'antd';
-import type { CarouselRef } from 'antd/es/carousel';
-import { useEffect, useMemo, useRef, useState } from 'react';
-
-import ButtonComponent from '@/components/ButtonComponent';
-import CardComponent, { type ProductCard } from '@/components/CardComponent';
-import type { Book, ShowcaseData } from '@/types/book';
-=======
 import { useEffect, useState, useRef } from "react";
 import { Carousel, Spin, message } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faStar, faFire, faTrophy, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { CarouselRef } from "antd/es/carousel";
 import CardComponent from "@/components/CardComponent";
 import ButtonComponent from "@/components/ButtonComponent";
@@ -37,270 +12,15 @@ import type { Book, ShowcaseData } from "@/types/book";
 export default function HomePage() {
   const [showcaseData, setShowcaseData] = useState<ShowcaseData | null>(null);
   const [loading, setLoading] = useState(true);
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
   // Banner carousel
   const bannerCarouselRef = useRef<CarouselRef | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-<<<<<<< HEAD
-type Showcase = {
-  id: string;
-  title: string;
-  subtitle: string;
-  accent: Accent;
-  background: string;
-  ctaLabel: string;
-  products: ProductCard[];
-};
-
-type ContactOption = {
-  label: string;
-  value: string;
-  href: string;
-  icon: IconDefinition;
-};
-
-type Highlight = {
-  id: string;
-  title: string;
-  description: string;
-  icon: IconDefinition;
-  accent: Accent;
-};
-
-const heroHighlights: Highlight[] = [
-  {
-    id: 'curation',
-    title: 'Tủ sách theo chủ đề',
-    description: 'Sắp xếp dựa trên kĩ năng và cảm xúc mà bé cần nuôi dưỡng.',
-    icon: faBookOpen,
-    accent: 'sky',
-  },
-  {
-    id: 'gift',
-    title: 'Gói quà nghệ thuật',
-    description: 'Miễn phí gói quà và thiệp viết tay cho mỗi đơn đặt hàng.',
-    icon: faGift,
-    accent: 'rose',
-  },
-  {
-    id: 'growth',
-    title: 'Lộ trình phát triển',
-    description: 'Tư vấn bởi chuyên gia giáo dục mầm non và tâm lý học.',
-    icon: faSeedling,
-    accent: 'emerald',
-  },
-];
-
-const ageRanges = [
-  { label: '0 - 2 tuổi', description: 'Khơi gợi giác quan đầu đời', accent: 'sky' as Accent },
-  { label: '3 - 4 tuổi', description: 'Khuyến khích trí tò mò', accent: 'rose' as Accent },
-  { label: '5 - 6 tuổi', description: 'Bồi dưỡng ngôn ngữ và cảm xúc', accent: 'amber' as Accent },
-  { label: '7 - 8 tuổi', description: 'Luyện thói quen đọc sách', accent: 'emerald' as Accent },
-  { label: '9 - 10 tuổi', description: 'Bước vào thế giới khám phá', accent: 'sky' as Accent },
-  { label: '11+ tuổi', description: 'Định hình tư duy độc lập', accent: 'rose' as Accent },
-];
-
-const accentBadgeStyles: Record<Accent, string> = {
-  sky: 'bg-sky-50 text-sky-600 border border-sky-200/60',
-  rose: 'bg-rose-50 text-rose-600 border border-rose-200/60',
-  amber: 'bg-amber-50 text-amber-600 border border-amber-200/60',
-  emerald: 'bg-emerald-50 text-emerald-600 border border-emerald-200/60',
-};
-
-const contactOptions: ContactOption[] = [
-  {
-    label: 'Hotline',
-    value: '+84 971 833 093',
-    href: 'tel:+84971833093',
-    icon: faPhone,
-  },
-  {
-    label: 'Messenger',
-    value: '@enfantsbooks',
-    href: 'https://m.me/104988175154682',
-    icon: faCommentDots,
-  },
-  {
-    label: 'Email',
-    value: 'hello@enfantsbooks.vn',
-    href: 'mailto:hello@enfantsbooks.vn',
-    icon: faEnvelope,
-  },
-];
-
-const heroBanners = [
-  'https://pos.nvncdn.com/5679e9-27451/bn/20250523_CpU3AO5i.gif?v=1747974773',
-  'https://pos.nvncdn.com/5679e9-27451/bn/20250520_u0tk6AVL.gif?v=1747711112',
-  'https://pos.nvncdn.com/5679e9-27451/bn/20250107_HRZhQmSo.gif?v=1736241946',
-  'https://pos.nvncdn.com/5679e9-27451/bn/20240717_vdHNhklV.gif?v=1721205944',
-];
-
-const partnerLogos = [
-  '/assets/cp1.png',
-  '/assets/cp2.png',
-  '/assets/cp3.jpeg',
-  '/assets/cp4.png',
-  '/assets/cp5.jpeg',
-  '/assets/cp6.png',
-];
-
-// Convert Book to ProductCard
-const bookToProductCard = (book: Book): ProductCard => {
-  const accentMap: Record<string, Accent> = {
-    'sach-thieu-nhi': 'sky',
-    'van-hoc': 'rose',
-    'kinh-te': 'amber',
-    'ky-nang-song': 'emerald',
-    'khoa-hoc-cong-nghe': 'sky',
-  };
-
-  const accent = accentMap[book.category.slug] || 'sky';
-  
-  // Format giá
-  const formatPrice = (price: string) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(parseFloat(price));
-  };
-
-  // Tính rating dựa trên số lượng bán và lượt xem
-  const calculateRating = () => {
-    const baseRating = 4.0;
-    const soldFactor = Math.min(book.soldCount / 100, 0.8);
-    const viewFactor = Math.min(book.viewCount / 1000, 0.2);
-    return Math.min(baseRating + soldFactor + viewFactor, 5.0);
-  };
-
-  // Xác định tag
-  let tag = undefined;
-  if (book.isFeatured) tag = 'Nổi bật';
-  else if (book.soldCount > 50) tag = 'Bán chạy';
-  else if (book.originalPrice && book.discount && book.discount > 20) tag = 'Giảm giá';
-
-  return {
-    id: book.id,
-    title: book.title,
-    slug: book.slug,
-    image: book.coverImage || 'https://via.placeholder.com/400x600?text=No+Image',
-    price: formatPrice(book.price),
-    originalPrice: book.originalPrice ? formatPrice(book.originalPrice) : undefined,
-    tag,
-    accent,
-    rating: parseFloat(calculateRating().toFixed(1)),
-  };
-};
-
-const chunkProducts = <T,>(items: T[], chunkSize: number) => {
-  const chunked: T[][] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunked.push(items.slice(i, i + chunkSize));
-  }
-  return chunked;
-};
-
-const ProductCarousel: React.FC<{ showcase: Showcase }> = ({ showcase }) => {
-  const carouselRef = useRef<CarouselRef | null>(null);
-  const slides = useMemo(() => chunkProducts(showcase.products, 3), [showcase.products]);
-
-  const handlePrev = () => carouselRef.current?.prev();
-  const handleNext = () => carouselRef.current?.next();
-
-  return (
-    <section
-      className={`relative w-full overflow-hidden rounded-[32px] border border-white/60 bg-gradient-to-br ${showcase.background} px-6 py-12 shadow-[0_45px_120px_-60px_rgba(15,23,42,0.45)] backdrop-blur-xl`}
-    >
-      <div className="absolute -left-10 top-16 h-32 w-32 rounded-full bg-white/40 blur-[90px]" />
-      <div className="absolute -right-10 bottom-10 h-40 w-40 rounded-full bg-white/30 blur-[90px]" />
-
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-10">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="max-w-2xl">
-            <span className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-slate-600 shadow-sm backdrop-blur ${accentBadgeStyles[showcase.accent]}`}>
-              <FontAwesomeIcon icon={faStar} className="text-[14px]" />
-              Lựa chọn Enfants Books
-            </span>
-            <h2 className="mt-5 text-3xl font-bold text-slate-800 md:text-4xl">{showcase.title}</h2>
-            <p className="mt-3 text-base text-slate-600 md:text-lg">{showcase.subtitle}</p>
-          </div>
-          <div className="flex gap-3 self-start md:self-center">
-            <button
-              type="button"
-              className="nav-pill"
-              aria-label="Xem sản phẩm trước"
-              onClick={handlePrev}
-            >
-              <FontAwesomeIcon icon={faChevronLeft} />
-            </button>
-            <button
-              type="button"
-              className="nav-pill"
-              aria-label="Xem sản phẩm kế tiếp"
-              onClick={handleNext}
-            >
-              <FontAwesomeIcon icon={faChevronRight} />
-            </button>
-          </div>
-        </div>
-
-        <div className="relative">
-          {showcase.products.length > 0 ? (
-            <Carousel
-              dots={false}
-              draggable
-              slidesToShow={3}
-              swipeToSlide
-              ref={carouselRef}
-              responsive={[
-                { breakpoint: 1280, settings: { slidesToShow: 2 } },
-                { breakpoint: 768, settings: { slidesToShow: 1 } },
-              ] as any}
-            >
-              {slides.map((group, groupIndex) => (
-                <div key={`slide-${showcase.id}-${groupIndex}`} className="px-3">
-                  <div className="grid gap-6 md:grid-cols-1">
-                    {group.map((product) => (
-                      <CardComponent key={product.id} product={product} />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </Carousel>
-          ) : (
-            <div className="flex h-64 items-center justify-center text-slate-500">
-              Chưa có sản phẩm nào
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-center">
-          <ButtonComponent
-            type="primary"
-            content={(
-              <>
-                <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
-                <span>{showcase.ctaLabel}</span>
-              </>
-            )}
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default function Home() {
-  const [activeContact, setActiveContact] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [showcases, setShowcases] = useState<Showcase[]>([]);
-=======
   // Product carousels
   const featuredCarouselRef = useRef<CarouselRef | null>(null);
   const bestsellerCarouselRef = useRef<CarouselRef | null>(null);
   const promotionCarouselRef = useRef<CarouselRef | null>(null);
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
   // Auto-change banner every 6 seconds
   useEffect(() => {
@@ -311,74 +31,9 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-<<<<<<< HEAD
-  // Fetch showcase data
-  useEffect(() => {
-    const fetchShowcaseData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/books/showcase');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch showcase data');
-        }
-
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-          const data: ShowcaseData = result.data;
-
-          const newShowcases: Showcase[] = [
-            {
-              id: 'featured',
-              title: 'Sản phẩm nổi bật',
-              subtitle: 'Danh sách lựa chọn bởi đội ngũ biên tập Enfants Books dành cho mùa lễ hội.',
-              accent: 'sky',
-              background: 'from-sky-50 via-white to-rose-50',
-              ctaLabel: 'Khám phá bộ sưu tập',
-              products: data.featured.map(bookToProductCard),
-            },
-            {
-              id: 'bestseller',
-              title: 'Sản phẩm bán chạy',
-              subtitle: 'Top sách và dụng cụ học tập được yêu thích nhất tháng này.',
-              accent: 'emerald',
-              background: 'from-emerald-50 via-white to-sky-50',
-              ctaLabel: 'Xem tất cả sản phẩm',
-              products: data.bestseller.map(bookToProductCard),
-            },
-            {
-              id: 'promotion',
-              title: 'Ưu đãi đang diễn ra',
-              subtitle: 'Giảm giá đến 35% cho bộ quà tặng & combo học liệu phát triển cảm xúc.',
-              accent: 'rose',
-              background: 'from-rose-50 via-white to-amber-50',
-              ctaLabel: 'Nhận ưu đãi ngay',
-              products: data.promotion.map(bookToProductCard),
-            },
-          ];
-
-          setShowcases(newShowcases);
-        }
-      } catch (error) {
-        console.error('Error fetching showcase:', error);
-        message.error('Không thể tải dữ liệu sản phẩm');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchShowcaseData();
-  }, []);
-
-  return (
-    <div className="relative flex w-full flex-col items-center gap-20 overflow-hidden pb-24">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(96,165,250,0.25),transparent_55%),_radial-gradient(circle_at_bottom,_rgba(244,114,182,0.2),transparent_60%)]" />
-=======
   useEffect(() => {
     fetchShowcaseData();
   }, []);
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
 
   const fetchShowcaseData = async () => {
     try {
@@ -453,16 +108,164 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin size="large" tip="Đang tải..." />
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-sky-50 via-purple-50 to-pink-50">
+        <div className="text-center">
+          <Spin size="large" />
+          <p className="mt-4 text-lg font-bold text-slate-700">Đang tải nội dung...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center overflow-hidden">
+      {/* Advanced Floating Decorations - THÊM VÀO SAU PHẦN Floating Decorations CŨ */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Bóng bay bay lơ lửng */}
+        <div className="absolute top-20 left-10 w-16 h-20 animate-float" style={{ animationDelay: '0s', animationDuration: '6s' }}>
+          🎈
+        </div>
+        <div className="absolute top-40 right-20 w-16 h-20 animate-float" style={{ animationDelay: '2s', animationDuration: '7s' }}>
+          🎈
+        </div>
+        <div className="absolute bottom-40 left-1/4 w-16 h-20 animate-float" style={{ animationDelay: '4s', animationDuration: '8s' }}>
+          🎈
+        </div>
+        <div className="absolute top-1/3 right-1/4 w-16 h-20 animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }}>
+          🎈
+        </div>
+        <div className="absolute bottom-1/4 right-1/3 w-16 h-20 animate-float" style={{ animationDelay: '3s', animationDuration: '7.5s' }}>
+          🎈
+        </div>
+
+        {/* Hoa rơi từ trên xuống + xoay tròn */}
+        <div className="absolute -top-10 left-1/4 text-4xl animate-fall-rotate" style={{ animationDelay: '0s', animationDuration: '10s' }}>
+          🌸
+        </div>
+        <div className="absolute -top-10 left-1/2 text-3xl animate-fall-rotate" style={{ animationDelay: '2s', animationDuration: '12s' }}>
+          🌺
+        </div>
+        <div className="absolute -top-10 left-3/4 text-4xl animate-fall-rotate" style={{ animationDelay: '4s', animationDuration: '11s' }}>
+          🌼
+        </div>
+        <div className="absolute -top-10 left-1/3 text-3xl animate-fall-rotate" style={{ animationDelay: '6s', animationDuration: '13s' }}>
+          🌻
+        </div>
+        <div className="absolute -top-10 left-2/3 text-4xl animate-fall-rotate" style={{ animationDelay: '8s', animationDuration: '10s' }}>
+          🌷
+        </div>
+
+        {/* Sao lấp lánh */}
+        <div className="absolute top-1/4 left-20 text-3xl animate-twinkle" style={{ animationDelay: '0s' }}>
+          ⭐
+        </div>
+        <div className="absolute top-1/3 right-32 text-2xl animate-twinkle" style={{ animationDelay: '1s' }}>
+          ✨
+        </div>
+        <div className="absolute bottom-1/3 left-1/3 text-3xl animate-twinkle" style={{ animationDelay: '2s' }}>
+          🌟
+        </div>
+        <div className="absolute bottom-1/4 right-1/4 text-2xl animate-twinkle" style={{ animationDelay: '1.5s' }}>
+          💫
+        </div>
+
+        {/* Bướm bay lượn */}
+        <div className="absolute top-1/2 left-10 text-4xl animate-butterfly" style={{ animationDelay: '0s', animationDuration: '15s' }}>
+          🦋
+        </div>
+        <div className="absolute top-1/3 right-10 text-3xl animate-butterfly" style={{ animationDelay: '5s', animationDuration: '18s' }}>
+          🦋
+        </div>
+
+        {/* Mây trôi */}
+        <div className="absolute top-20 right-0 text-6xl animate-cloud" style={{ animationDelay: '0s', animationDuration: '30s' }}>
+          ☁️
+        </div>
+        <div className="absolute top-40 right-0 text-5xl animate-cloud" style={{ animationDelay: '10s', animationDuration: '35s' }}>
+          ☁️
+        </div>
+        <div className="absolute top-60 right-0 text-4xl animate-cloud" style={{ animationDelay: '20s', animationDuration: '40s' }}>
+          ☁️
+        </div>
+      </div>
+
+      {/* CSS Animations - THÊM VÀO CUỐI FILE, TRONG <style> TAG */}
+      <style jsx>{`
+        /* Bóng bay bay lơ lửng lên xuống */
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(-30px) translateX(10px); }
+          50% { transform: translateY(-60px) translateX(-10px); }
+          75% { transform: translateY(-30px) translateX(10px); }
+        }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+
+        /* Hoa rơi + xoay tròn */
+        @keyframes fall-rotate {
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0.3;
+          }
+        }
+        .animate-fall-rotate {
+          animation: fall-rotate 10s linear infinite;
+        }
+
+        /* Sao lấp lánh */
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.3); }
+        }
+        .animate-twinkle {
+          animation: twinkle 2s ease-in-out infinite;
+        }
+
+        /* Bướm bay lượn theo đường cong */
+        @keyframes butterfly {
+          0% {
+            transform: translate(0, 0) rotate(0deg);
+          }
+          25% {
+            transform: translate(100px, -50px) rotate(10deg);
+          }
+          50% {
+            transform: translate(200px, 0) rotate(-10deg);
+          }
+          75% {
+            transform: translate(300px, -30px) rotate(5deg);
+          }
+          100% {
+            transform: translate(400px, 0) rotate(0deg);
+          }
+        }
+        .animate-butterfly {
+          animation: butterfly 15s ease-in-out infinite;
+        }
+
+        /* Mây trôi từ phải sang trái */
+        @keyframes cloud {
+          0% {
+            transform: translateX(100vw);
+            opacity: 0.7;
+          }
+          100% {
+            transform: translateX(-200px);
+            opacity: 0.3;
+          }
+        }
+        .animate-cloud {
+          animation: cloud 30s linear infinite;
+        }
+      `}</style>
+
       {/* Hero Banner Carousel */}
-      <section className="max-w-[1200px] w-full relative mb-10">
+      <section className="max-w-[1200px] w-full relative mb-10 z-10">
         <Carousel 
           ref={bannerCarouselRef}
           draggable 
@@ -475,59 +278,48 @@ export default function Home() {
             <img 
               src="https://pos.nvncdn.com/5679e9-27451/bn/20250523_CpU3AO5i.gif?v=1747974773" 
               alt="Banner 1"
-              className="w-full h-auto"
+              className="w-full h-auto rounded-3xl shadow-2xl"
             />
           </div>
           <div>
             <img 
               src="https://pos.nvncdn.com/5679e9-27451/bn/20250520_u0tk6AVL.gif?v=1747711112" 
               alt="Banner 2"
-              className="w-full h-auto"
+              className="w-full h-auto rounded-3xl shadow-2xl"
             />
           </div>
           <div>
             <img 
               src="https://pos.nvncdn.com/5679e9-27451/bn/20250107_HRZhQmSo.gif?v=1736241946" 
               alt="Banner 3"
-              className="w-full h-auto"
+              className="w-full h-auto rounded-3xl shadow-2xl"
             />
           </div>
           <div>
             <img 
               src="https://pos.nvncdn.com/5679e9-27451/bn/20240717_vdHNhklV.gif?v=1721205944" 
               alt="Banner 4"
-              className="w-full h-auto"
+              className="w-full h-auto rounded-3xl shadow-2xl"
             />
           </div>
         </Carousel>
 
-        <section className="max-w-[1200px] w-full py-16 px-6">
-          <div className="text-center bg-gradient-to-r from-sky-50 via-white to-rose-50 rounded-3xl p-12 shadow-lg">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-sky-600 to-rose-600 bg-clip-text text-transparent mb-4">
-              Chào mừng đến với Enfants Books
-            </h1>
-            <p className="text-xl md:text-2xl text-slate-700 font-medium">
-              Nơi nâng tầm tri thức cho trẻ từ <span className="text-sky-600 font-bold">0 - 12 tuổi</span>
-            </p>
-          </div>
-        </section>
-
         {/* Navigation Arrows */}
         <button
-          className="absolute top-1/2 -translate-y-1/2 left-4 z-10 bg-white/80 hover:bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all"
+          className="absolute top-1/2 -translate-y-1/2 left-4 z-10 bg-white hover:bg-gradient-to-r hover:from-sky-400 hover:to-blue-500 hover:text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl transition-all transform hover:scale-110"
           onClick={handleBannerPrev}
         >
-          <FontAwesomeIcon icon={faChevronLeft} className="text-slate-700" />
+          <FontAwesomeIcon icon={faChevronLeft} />
         </button>
         <button
-          className="absolute top-1/2 -translate-y-1/2 right-4 z-10 bg-white/80 hover:bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all"
+          className="absolute top-1/2 -translate-y-1/2 right-4 z-10 bg-white hover:bg-gradient-to-r hover:from-sky-400 hover:to-blue-500 hover:text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl transition-all transform hover:scale-110"
           onClick={handleBannerNext}
         >
-          <FontAwesomeIcon icon={faChevronRight} className="text-slate-700" />
+          <FontAwesomeIcon icon={faChevronRight} />
         </button>
 
         {/* Dots Indicator */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-10">
           {[0, 1, 2, 3].map((index) => (
             <button
               key={index}
@@ -535,34 +327,107 @@ export default function Home() {
                 setActiveIndex(index);
                 bannerCarouselRef.current?.goTo(index);
               }}
-              className={`w-3 h-3 rounded-full transition-all ${
+              className={`h-3 rounded-full transition-all shadow-lg ${
                 activeIndex === index 
-                  ? 'bg-white w-8' 
-                  : 'bg-white/50 hover:bg-white/75'
+                  ? 'bg-gradient-to-r from-sky-400 to-blue-500 w-10' 
+                  : 'bg-white/70 hover:bg-white w-3'
               }`}
             />
           ))}
         </div>
       </section>
 
-      {/* Featured Books Section */}
+      {/* Welcome Section */}
+      <section className="max-w-[1200px] w-full py-12 px-6 z-10">
+        <div className="text-center bg-gradient-to-r from-sky-100 via-purple-100 to-pink-100 rounded-3xl p-12 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-300 rounded-full opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-pink-300 rounded-full opacity-20 translate-y-1/2 -translate-x-1/2"></div>
+          
+          <div className="relative z-10">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-sky-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              ✨ Chào mừng đến với Enfants Books ✨
+            </h1>
+            <p className="text-xl md:text-2xl text-slate-700 font-medium">
+              Nơi nâng tầm tri thức cho trẻ từ <span className="text-sky-600 font-bold">0 - 12 tuổi</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Books Section - THIẾT KẾ NỔI BẬT */}
       {showcaseData?.featured && showcaseData.featured.length > 0 && (
-        <section className="w-full py-20 bg-white">
-          <div className="max-w-[1200px] mx-auto px-6">
+        <section className="w-full py-20 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden">
+                    {/* Decorative Elements */}
+          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200 rounded-full opacity-30 blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-orange-200 rounded-full opacity-30 blur-3xl"></div>
+
+                    {/* Hiệu ứng động cho Featured */}
+          <div className="absolute top-20 left-1/4 text-5xl animate-bounce-slow">🏆</div>
+          <div className="absolute top-1/3 right-1/4 text-4xl animate-float" style={{ animationDelay: '1s', animationDuration: '5s' }}>👑</div>
+          <div className="absolute bottom-1/3 left-1/3 text-4xl animate-spin-slow">✨</div>
+          <div className="absolute bottom-1/4 right-1/3 text-5xl animate-pulse-custom">🌟</div>
+
+                    {/* Vương miện rơi */}
+          <div className="absolute -top-10 left-1/5 text-4xl animate-fall-rotate" style={{ animationDelay: '0s', animationDuration: '8s' }}>👑</div>
+          <div className="absolute -top-10 left-2/5 text-3xl animate-fall-rotate" style={{ animationDelay: '3s', animationDuration: '10s' }}>👑</div>
+          <div className="absolute -top-10 left-3/5 text-4xl animate-fall-rotate" style={{ animationDelay: '6s', animationDuration: '9s' }}>👑</div>
+
+                    {/* Sao bay ngang */}
+          <div className="absolute top-1/4 -left-10 text-4xl animate-star-fly">⭐</div>
+          <div className="absolute top-1/2 -left-10 text-3xl animate-star-fly" style={{ animationDelay: '3s' }}>🌟</div>
+                    {/* Floating Stars */}
+          <div className="absolute top-20 right-1/4 text-yellow-400 text-3xl animate-pulse">⭐</div>
+          <div className="absolute bottom-40 left-1/4 text-orange-400 text-2xl animate-pulse" style={{ animationDelay: '0.5s' }}>✨</div>
+          <div className="absolute top-1/2 right-20 text-amber-400 text-4xl animate-pulse" style={{ animationDelay: '1s' }}>🌟</div>
+
+          <div className="max-w-[1200px] mx-auto px-6 relative z-10">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">Sản phẩm nổi bật</h2>
-              <p className="text-lg text-slate-600">Những cuốn sách được yêu thích nhất</p>
+              <div className="inline-block bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-3 rounded-full mb-4 shadow-lg transform hover:scale-105 transition-all">
+                <FontAwesomeIcon icon={faStar} className="mr-2 animate-spin" style={{ animationDuration: '3s' }} />
+                <span className="font-bold text-lg">BEST OF THE BEST</span>
+                <FontAwesomeIcon icon={faStar} className="ml-2 animate-spin" style={{ animationDuration: '3s' }} />
+              </div>
+              
+              <h2 className="text-5xl font-bold mb-4 relative inline-block">
+                <span className="bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">
+                  🏆 Sản phẩm nổi bật 🏆
+                </span>
+              </h2>
+              
+              <p className="text-xl text-slate-700 font-medium">
+                Những cuốn sách được yêu thích nhất bởi các bậc phụ huynh
+              </p>
+              
+              {/* Decorative Line */}
+              <div className="flex items-center justify-center gap-2 mt-4">
+                <div className="w-20 h-1 bg-gradient-to-r from-transparent to-amber-400 rounded"></div>
+                <FontAwesomeIcon icon={faHeart} className="text-orange-500 text-2xl animate-pulse" />
+                <div className="w-20 h-1 bg-gradient-to-l from-transparent to-amber-400 rounded"></div>
+              </div>
             </div>
 
+            {/* Cards with special border */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8">
-              {showcaseData.featured.map((book) => (
-                <CardComponent key={book.id} product={bookToProductCard(book)} />
+              {showcaseData.featured.map((book, index) => (
+                <div 
+                  key={book.id} 
+                  className="relative"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {/* Crown for top 3 */}
+                  {index < 3 && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 text-4xl animate-bounce" style={{ animationDuration: '2s' }}>
+                      👑
+                    </div>
+                  )}
+                  <CardComponent product={bookToProductCard(book)} />
+                </div>
               ))}
             </div>
 
             <div className="flex justify-center mt-8">
               <ButtonComponent
-                content="Xem tất cả"
+                content="🌈 Khám phá thêm sách hay 🌈"
                 type="primary"
                 onClick={() => window.location.href = "/books?featured=true"}
               />
@@ -571,13 +436,60 @@ export default function Home() {
         </section>
       )}
 
-      {/* Bestseller Books Section */}
+      {/* Bestseller Books Section - THIẾT KẾ HOT */}
       {showcaseData?.bestseller && showcaseData.bestseller.length > 0 && (
-        <section className="w-full py-20 bg-gradient-to-br from-slate-50 to-sky-50">
-          <div className="max-w-[1200px] mx-auto px-6">
+        <section className="w-full py-20 bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 relative overflow-hidden">
+          {/* Decorative Elements */}
+          <div className="absolute top-10 right-10 w-40 h-40 bg-red-200 rounded-full opacity-30 blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-36 h-36 bg-pink-200 rounded-full opacity-30 blur-3xl"></div>
+
+          {/* Hiệu ứng động cho Bestseller */}
+          <div className="absolute top-1/4 left-20 text-5xl animate-fire-flicker">🔥</div>
+          <div className="absolute bottom-1/4 right-20 text-4xl animate-fire-flicker" style={{ animationDelay: '0.5s' }}>🔥</div>
+          <div className="absolute top-1/2 left-1/3 text-5xl animate-fire-flicker" style={{ animationDelay: '1s' }}>🔥</div>
+
+          {/* Sét rơi */}
+          <div className="absolute -top-10 left-1/4 text-5xl animate-lightning" style={{ animationDelay: '0s' }}>⚡</div>
+          <div className="absolute -top-10 left-1/2 text-4xl animate-lightning" style={{ animationDelay: '2s' }}>⚡</div>
+          <div className="absolute -top-10 left-3/4 text-5xl animate-lightning" style={{ animationDelay: '4s' }}>⚡</div>
+
+          {/* Bùng nổ */}
+          <div className="absolute top-1/3 right-1/4 text-5xl animate-explode">💥</div>
+          <div className="absolute bottom-1/3 left-1/4 text-4xl animate-explode" style={{ animationDelay: '1.5s' }}>💥</div>
+
+          {/* Trophy bay */}
+          <div className="absolute top-20 left-10 text-4xl animate-trophy-bounce">🏆</div>
+          <div className="absolute bottom-20 right-10 text-4xl animate-trophy-bounce" style={{ animationDelay: '1s' }}>🏆</div>
+
+          
+          {/* Fire Effects */}
+          <div className="absolute top-1/4 left-20 text-5xl animate-bounce" style={{ animationDuration: '2s' }}>🔥</div>
+          <div className="absolute bottom-1/4 right-20 text-4xl animate-bounce" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>💥</div>
+
+          <div className="max-w-[1200px] mx-auto px-6 relative z-10">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4">Sách bán chạy</h2>
-              <p className="text-lg text-slate-600">Top những cuốn sách được mua nhiều nhất</p>
+              <div className="inline-block bg-gradient-to-r from-red-500 to-pink-500 text-white px-8 py-3 rounded-full mb-4 shadow-lg transform hover:scale-105 transition-all">
+                <FontAwesomeIcon icon={faFire} className="mr-2 animate-pulse" />
+                <span className="font-bold text-lg">HOT HOT HOT</span>
+                <FontAwesomeIcon icon={faFire} className="ml-2 animate-pulse" />
+              </div>
+              
+              <h2 className="text-5xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-red-600 via-pink-600 to-rose-600 bg-clip-text text-transparent">
+                  🔥 Sách bán chạy nhất 🔥
+                </span>
+              </h2>
+              
+              <p className="text-xl text-slate-700 font-medium">
+                Top những cuốn sách được mua nhiều nhất trong tháng
+              </p>
+              
+              {/* Decorative Line */}
+              <div className="flex items-center justify-center gap-2 mt-4">
+                <div className="w-20 h-1 bg-gradient-to-r from-transparent to-red-400 rounded"></div>
+                <FontAwesomeIcon icon={faTrophy} className="text-pink-500 text-2xl animate-pulse" />
+                <div className="w-20 h-1 bg-gradient-to-l from-transparent to-red-400 rounded"></div>
+              </div>
             </div>
 
             <div className="relative px-12">
@@ -602,13 +514,13 @@ export default function Home() {
               </Carousel>
               
               <button
-                className="absolute top-1/2 -translate-y-1/2 -right-2 text-sky-500 text-4xl hover:text-sky-600 transition-colors z-10"
+                className="absolute top-1/2 -translate-y-1/2 -right-2 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow-xl hover:scale-110 transition-all z-10"
                 onClick={() => bestsellerCarouselRef.current?.next()}
               >
                 <FontAwesomeIcon icon={faChevronRight} />
               </button>
               <button
-                className="absolute top-1/2 -translate-y-1/2 -left-2 text-sky-500 text-4xl hover:text-sky-600 transition-colors z-10"
+                className="absolute top-1/2 -translate-y-1/2 -left-2 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow-xl hover:scale-110 transition-all z-10"
                 onClick={() => bestsellerCarouselRef.current?.prev()}
               >
                 <FontAwesomeIcon icon={faChevronLeft} />
@@ -617,7 +529,7 @@ export default function Home() {
 
             <div className="flex justify-center mt-8">
               <ButtonComponent
-                content="Xem tất cả"
+                content="🚀 Xem tất cả sách hot 🚀"
                 type="primary"
                 onClick={() => window.location.href = "/books?sortBy=bestseller"}
               />
@@ -626,13 +538,63 @@ export default function Home() {
         </section>
       )}
 
-      {/* Promotion Books Section */}
+     {/* Promotion Books Section - REDESIGNED */}
       {showcaseData?.promotion && showcaseData.promotion.length > 0 && (
-        <section className="w-full py-20 bg-[#ab8585] [background-image:url('/assets/bg1.png'),url('/assets/bg2.png')] [background-position:top_left,bottom_right] [background-repeat:no-repeat,no-repeat]">
-          <div className="max-w-[1200px] mx-auto px-6">
-            <div className="text-center mb-12 flex justify-center items-center gap-4">
-              <h2 className="text-4xl font-bold text-white">Sản phẩm đang khuyến mãi</h2>
-              <img className="w-16 h-16 animate-pulse" src="/assets/fire.png" alt="fire" />
+        <section className="w-full py-20 bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 relative overflow-hidden">
+          {/* Decorative Elements */}
+          <div className="absolute top-10 right-10 w-40 h-40 bg-orange-200 rounded-full opacity-20 blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-36 h-36 bg-red-200 rounded-full opacity-20 blur-3xl"></div>
+
+          {/* Hiệu ứng động cho Promotion */}
+          <div className="absolute top-1/4 left-20 text-5xl animate-fire-flicker">🔥</div>
+          <div className="absolute bottom-1/4 right-20 text-4xl animate-fire-flicker" style={{ animationDelay: '0.7s' }}>🔥</div>
+          <div className="absolute top-1/2 left-1/3 text-3xl animate-fire-flicker" style={{ animationDelay: '1.4s' }}>🔥</div>
+
+          {/* Sale tags bay */}
+          <div className="absolute top-20 left-1/4 text-5xl animate-sale-spin" style={{ animationDelay: '0s' }}>🏷️</div>
+          <div className="absolute top-1/3 right-1/4 text-4xl animate-sale-spin" style={{ animationDelay: '2s' }}>💰</div>
+          <div className="absolute bottom-1/3 left-1/3 text-5xl animate-sale-spin" style={{ animationDelay: '4s' }}>🎁</div>
+
+          {/* Tiền rơi */}
+          <div className="absolute -top-10 left-1/5 text-4xl animate-money-fall" style={{ animationDelay: '0s' }}>💵</div>
+          <div className="absolute -top-10 left-2/5 text-3xl animate-money-fall" style={{ animationDelay: '1.5s' }}>💵</div>
+          <div className="absolute -top-10 left-3/5 text-4xl animate-money-fall" style={{ animationDelay: '3s' }}>💵</div>
+          <div className="absolute -top-10 left-4/5 text-3xl animate-money-fall" style={{ animationDelay: '4.5s' }}>💵</div>
+
+          {/* Pháo hoa */}
+          <div className="absolute top-1/4 right-1/4 text-5xl animate-firework">🎆</div>
+          <div className="absolute bottom-1/4 left-1/4 text-4xl animate-firework" style={{ animationDelay: '1s' }}>🎇</div>
+          {/* Floating Elements */}
+          <div className="absolute top-1/4 left-20 text-5xl animate-bounce" style={{ animationDuration: '2s' }}>🔥</div>
+          <div className="absolute bottom-1/4 right-20 text-4xl animate-bounce" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>💥</div>
+          <div className="absolute top-1/2 left-1/3 text-3xl animate-pulse" style={{ animationDelay: '1s' }}>⚡</div>
+
+          <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+            <div className="text-center mb-12">
+              {/* Badge */}
+              <div className="inline-block bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full mb-4 shadow-lg transform hover:scale-105 transition-all">
+                <FontAwesomeIcon icon={faFire} className="mr-2 animate-pulse" />
+                <span className="font-bold text-lg">FLASH SALE</span>
+                <FontAwesomeIcon icon={faFire} className="ml-2 animate-pulse" />
+              </div>
+              
+              {/* Title */}
+              <h2 className="text-5xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent">
+                  🎉 Sản phẩm đang khuyến mãi 🎉
+                </span>
+              </h2>
+              
+              <p className="text-xl text-slate-700 font-medium">
+                ⚡ Giảm giá cực sốc - Mua ngay kẻo hết ⚡
+              </p>
+              
+              {/* Decorative Line */}
+              <div className="flex items-center justify-center gap-2 mt-4">
+                <div className="w-20 h-1 bg-gradient-to-r from-transparent to-orange-400 rounded"></div>
+                <img className="w-8 h-8 animate-pulse" src="/assets/fire.png" alt="fire" />
+                <div className="w-20 h-1 bg-gradient-to-l from-transparent to-orange-400 rounded"></div>
+              </div>
             </div>
 
             <div className="relative px-12">
@@ -657,13 +619,13 @@ export default function Home() {
               </Carousel>
               
               <button
-                className="absolute top-1/2 -translate-y-1/2 -right-2 text-white text-4xl hover:text-sky-200 transition-colors z-10"
+                className="absolute top-1/2 -translate-y-1/2 -right-2 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-xl hover:scale-110 transition-all z-10"
                 onClick={() => promotionCarouselRef.current?.next()}
               >
                 <FontAwesomeIcon icon={faChevronRight} />
               </button>
               <button
-                className="absolute top-1/2 -translate-y-1/2 -left-2 text-white text-4xl hover:text-sky-200 transition-colors z-10"
+                className="absolute top-1/2 -translate-y-1/2 -left-2 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-xl hover:scale-110 transition-all z-10"
                 onClick={() => promotionCarouselRef.current?.prev()}
               >
                 <FontAwesomeIcon icon={faChevronLeft} />
@@ -672,9 +634,16 @@ export default function Home() {
 
             <div className="flex justify-center mt-8">
               <ButtonComponent
-                content="Xem tất cả khuyến mãi"
+                content={
+                  <span className="flex items-center gap-2">
+                    <span className="text-2xl animate-bounce">🔥</span>
+                    <span>Săn deal ngay!</span>
+                    <span className="text-2xl animate-bounce" style={{ animationDelay: '0.2s' }}>🔥</span>
+                  </span>
+                }
                 type="primary"
                 onClick={() => window.location.href = "/books"}
+                className="!bg-gradient-to-r !from-orange-500 !to-red-500 !text-white hover:!from-orange-600 hover:!to-red-600 !shadow-2xl hover:!scale-105 !font-bold !text-lg !py-4"
               />
             </div>
           </div>
@@ -682,81 +651,45 @@ export default function Home() {
       )}
 
       {/* Categories Section */}
-      <section className="w-full py-20 bg-white">
-        <div className="max-w-[1200px] mx-auto px-6">
+      <section className="w-full py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-1/4 left-10 w-32 h-32 bg-blue-300 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-purple-300 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Danh mục sách</h2>
-            <p className="text-lg text-slate-600">Khám phá theo chủ đề yêu thích</p>
+            <h2 className="text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                📚 Danh mục sách 📚
+              </span>
+            </h2>
+            <p className="text-xl text-slate-700 font-medium">Khám phá theo chủ đề yêu thích của bé</p>
           </div>
 
-<<<<<<< HEAD
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            {ageRanges.map((range) => (
-              <div key={range.label} className={`age-card ${range.accent}`}>
-                <div className="age-card__inner">
-                  <span>{range.label}</span>
-                  <p>{range.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="w-full px-4">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-12">
-          {loading ? (
-            <div className="flex h-96 items-center justify-center">
-              <Spin size="large" tip="Đang tải sản phẩm..." />
-            </div>
-          ) : (
-            showcases.map((showcase) => (
-              <ProductCarousel key={showcase.id} showcase={showcase} />
-            ))
-          )}
-        </div>
-      </section>
-
-      <section className="w-full px-4">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 rounded-[28px] border border-white/40 bg-white/80 p-10 text-center shadow-[0_60px_140px_-90px_rgba(15,23,42,0.45)] backdrop-blur-xl">
-          <div className="flex flex-col items-center gap-4">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-4 py-1 text-xs uppercase tracking-[0.35em] text-slate-500">
-              <FontAwesomeIcon icon={faBookOpen} className="text-sky-500" />
-              Đối tác chiến lược
-            </span>
-            <h2 className="text-3xl text-slate-900 md:text-4xl">Đồng hành cùng những thương hiệu giáo dục uy tín</h2>
-            <p className="max-w-3xl text-sm text-slate-500 md:text-base">
-              Chúng tôi hợp tác cùng các nhà xuất bản, trung tâm giáo dục và nghệ sĩ minh hoạ để mang đến những trải nghiệm đọc và học trọn vẹn nhất cho trẻ nhỏ.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 items-center justify-items-center gap-6 md:grid-cols-3 lg:grid-cols-6">
-            {partnerLogos.map((logo, index) => (
-              <div key={logo} className="partner-card">
-                <img src={logo} alt={`Đối tác ${index + 1}`} className="h-16 w-auto object-contain" />
-              </div>
-=======
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {[
-              { name: "Sách Thiếu Nhi", slug: "sach-thieu-nhi", color: "sky" },
-              { name: "Văn Học", slug: "van-hoc", color: "rose" },
-              { name: "Kinh Tế", slug: "kinh-te", color: "amber" },
-              { name: "Kỹ Năng Sống", slug: "ky-nang-song", color: "emerald" },
-              { name: "Khoa Học - Công Nghệ", slug: "khoa-hoc-cong-nghe", color: "sky" },
+              { name: "Sách Thiếu Nhi", slug: "sach-thieu-nhi", color: "sky", emoji: "🧸" },
+              { name: "Văn Học", slug: "van-hoc", color: "rose", emoji: "📖" },
+              { name: "Kinh Tế", slug: "kinh-te", color: "amber", emoji: "💼" },
+              { name: "Kỹ Năng Sống", slug: "ky-nang-song", color: "emerald", emoji: "🌱" },
+              { name: "Khoa Học", slug: "khoa-hoc-cong-nghe", color: "blue", emoji: "🔬" },
             ].map((category) => (
               <a
                 key={category.slug}
                 href={`/books?category=${category.slug}`}
-                className={`group relative overflow-hidden rounded-2xl border-2 border-${category.color}-200 bg-gradient-to-br from-${category.color}-50 to-white p-8 text-center transition-all hover:shadow-xl hover:-translate-y-2`}
+                className="group relative overflow-hidden rounded-3xl border-4 border-white bg-gradient-to-br from-white to-gray-50 p-8 text-center transition-all hover:shadow-2xl hover:-translate-y-3 hover:scale-105"
               >
-                <h3 className={`text-xl font-bold text-${category.color}-900 mb-2`}>
+                <div className="text-5xl mb-3 transform group-hover:scale-125 transition-transform">
+                  {category.emoji}
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">
                   {category.name}
                 </h3>
-                <p className="text-sm text-slate-600 group-hover:text-slate-900">
+                <p className="text-sm text-gray-600 group-hover:text-gray-900 font-medium">
                   Khám phá ngay →
                 </p>
               </a>
->>>>>>> 208fe48 (Cơ bản trang staff + books + home + category)
             ))}
           </div>
         </div>
