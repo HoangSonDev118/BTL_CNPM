@@ -12,6 +12,7 @@ export type ProductCard = {
   tag?: string;
   accent?: 'sky' | 'rose' | 'amber' | 'emerald';
   rating?: number;
+  discount?: number; 
 };
 
 type CardComponentProps = {
@@ -52,12 +53,26 @@ const fallbackProduct: ProductCard = {
   tag: 'Bán chạy',
   accent: 'sky',
   rating: 4.8,
+  discount: 22,
 };
 
 const CardComponent: React.FC<CardComponentProps> = ({ className = '', product = fallbackProduct }) => {
   const accent = product.accent ?? 'sky';
   const accentStyle = accentStyles[accent];
   const rating = product.rating ?? 5;
+  
+  const calculateDiscount = () => {
+    if (!product.discount && product.originalPrice && product.price) {
+      const original = parseFloat(product.originalPrice.replace(/[^\d]/g, ''));
+      const current = parseFloat(product.price.replace(/[^\d]/g, ''));
+      if (original > current) {
+        return Math.round(((original - current) / original) * 100);
+      }
+    }
+    return product.discount || 0;
+  };
+  
+  const discount = calculateDiscount();
 
   return (
     <a
@@ -65,15 +80,27 @@ const CardComponent: React.FC<CardComponentProps> = ({ className = '', product =
       className={`group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-white/40 bg-white/80 p-4 text-[#2f2f2f] shadow-[0_25px_50px_-25px_rgba(15,23,42,0.35)] backdrop-blur-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_55px_-25px_rgba(14,116,144,0.45)] ${className}`}
     >
       <div className={`pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100 ${accentStyle.glow}`} />
-      {product.tag && (
-        <span className={`absolute left-4 top-4 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs tracking-wide ${accentStyle.badge}`}>
-          <FontAwesomeIcon icon={faStar} className="text-[12px]" />
-          {product.tag}
-        </span>
-      )}
-
+      
       <div className="relative overflow-hidden rounded-xl border border-white/50 bg-gradient-to-br from-white/60 via-white/30 to-white/20">
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-30" />
+        
+        {/* Discount Badge - Góc trên bên trái - Theo thiết kế ảnh */}
+        {discount > 0 && (
+          <div className="absolute top-2 left-2 z-10">
+            <div className="bg-white border-2 border-red-500 text-red-500 font-bold px-2.5 py-1 rounded shadow-sm">
+              <span className="text-xs tracking-wide">SAVE {discount}%</span>
+            </div>
+          </div>
+        )}
+        
+        {/* Tag Badge */}
+        {product.tag && (
+          <span className={`absolute ${discount > 0 ? 'right-2 top-2' : 'left-4 top-4'} inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs tracking-wide z-10 ${accentStyle.badge}`}>
+            <FontAwesomeIcon icon={faStar} className="text-[12px]" />
+            {product.tag}
+          </span>
+        )}
+        
         <img
           className="h-56 w-full object-cover transition-transform duration-[600ms] group-hover:scale-105"
           src={product.image}
@@ -107,7 +134,6 @@ const CardComponent: React.FC<CardComponentProps> = ({ className = '', product =
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              // Handle add to wishlist
             }}
           >
             <FontAwesomeIcon icon={faHeart} />
