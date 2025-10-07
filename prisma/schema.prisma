@@ -3,14 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-enum Role {
-  USER
-  STAFF
-  SUPER_ADMIN
 }
 
 model User {
@@ -19,66 +13,60 @@ model User {
   email        String   @unique
   phone        String?
   passwordHash String
-  role         Role     @default(USER)
   createdAt    DateTime @default(now())
+  role         Role     @default(USER)
+  reviews      Review[]
 }
 
-// Danh mục sách
 model Category {
   id          String   @id @default(uuid())
   name        String   @unique
-  slug        String   @unique // URL-friendly: "sach-thieu-nhi"
-  description String?
-  image       String?  // URL ảnh danh mục
-  books       Book[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-// Tác giả
-model Author {
-  id          String   @id @default(uuid())
-  name        String
   slug        String   @unique
-  biography   String?  @db.Text
-  avatar      String?  // URL ảnh tác giả
-  books       Book[]
+  description String?
+  image       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  books       Book[]
 }
 
-// Sách
+model Author {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  biography String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  books     Book[]
+}
+
 model Book {
-  id             String      @id @default(uuid())
-  title          String
-  slug           String      @unique // URL-friendly
-  description    String?     @db.Text
-  price          Decimal     @db.Decimal(10, 2) // Giá bán
-  originalPrice  Decimal?    @db.Decimal(10, 2) // Giá gốc (để tính % giảm)
-  stock          Int         @default(0) // Số lượng tồn kho
-  publishYear    Int?        // Năm xuất bản
-  publisher      String?     // Nhà xuất bản
-  pages          Int?        // Số trang
-  language       String      @default("vi") // Ngôn ngữ: vi, en
-  isbn           String?     @unique // Mã ISBN
-  coverImage     String?     // Ảnh bìa chính
-  isActive       Boolean     @default(true) // Hiển thị hay ẩn
-  isFeatured     Boolean     @default(false) // Sản phẩm nổi bật
-  viewCount      Int         @default(0) // Lượt xem
-  soldCount      Int         @default(0) // Đã bán
-  
-  // Relations
-  authorId       String
-  author         Author      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
-  categoryId     String
-  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  
-  images         BookImage[]
-  
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  
+  id            String      @id @default(uuid())
+  title         String
+  slug          String      @unique
+  description   String?
+  price         Decimal     @db.Decimal(10, 2)
+  originalPrice Decimal?    @db.Decimal(10, 2)
+  stock         Int         @default(0)
+  publishYear   Int?
+  publisher     String?
+  pages         Int?
+  language      String      @default("vi")
+  isbn          String?     @unique
+  coverImage    String?
+  isActive      Boolean     @default(true)
+  isFeatured    Boolean     @default(false)
+  viewCount     Int         @default(0)
+  soldCount     Int         @default(0)
+  authorId      String
+  categoryId    String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  author        Author      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category      Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  images        BookImage[]
+  reviews        Review[]
+
   @@index([slug])
   @@index([categoryId])
   @@index([authorId])
@@ -86,17 +74,39 @@ model Book {
   @@index([isFeatured])
 }
 
-// Ảnh sách (nhiều ảnh cho 1 cuốn sách)
 model BookImage {
   id        String   @id @default(uuid())
-  url       String   // URL ảnh
-  alt       String?  // Mô tả ảnh (SEO)
-  order     Int      @default(0) // Thứ tự hiển thị
-  
+  url       String
+  alt       String?
+  order     Int      @default(0)
   bookId    String
-  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  
   createdAt DateTime @default(now())
-  
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
   @@index([bookId])
+}
+
+enum Role {
+  USER
+  STAFF
+  SUPER_ADMIN
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId String
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  
+  @@unique([bookId, userId])
+  @@index([bookId])
+  @@index([userId])
+  @@map("reviews")
 }

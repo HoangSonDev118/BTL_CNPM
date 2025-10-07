@@ -1,0 +1,328 @@
+"use client";
+
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faChevronRight, 
+  faTruck, 
+  faMoneyBill, 
+  faCreditCard,
+  faMapMarkerAlt,
+  faUser,
+  faPhone,
+  faEnvelope
+} from '@fortawesome/free-solid-svg-icons';
+
+type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
+const cartItems: CartItem[] = [
+  { id: 1, name: 'Nh?ng truy?n c? tích danh', price: 189050, quantity: 2 },
+  { id: 2, name: 'D?c tranh nh? ch? - Combo', price: 57000, quantity: 1 }
+];
+
+export default function CheckoutPage() {
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [formData, setFormData] = useState({
+    fullName: '', phone: '', email: '', address: '', city: '', district: '', ward: '', note: ''
+  });
+
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shippingFee = 30000;
+  const total = subtotal + shippingFee;
+
+  const formatPrice = (price) => price.toLocaleString('vi-VN') + 'd';
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log('Payment:', paymentMethod, 'Data:', formData);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="bg-gradient-to-r from-sky-400 to-blue-400 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0 C300,100 900,100 1200,0 L1200,120 L0,120 Z" fill="white"/>
+          </svg>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 py-12 relative z-10 text-center">
+          <h1 className="text-4xl font-bold mb-3">Chi ti?t thanh toán</h1>
+          <div className="flex items-center justify-center gap-2 text-sm opacity-90">
+            <span>Trang ch?</span>
+            <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+            <span>Gi? hàng</span>
+            <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+            <span>Chi ti?t thanh toán</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center font-bold mb-2">?</div>
+            <span className="text-sm font-semibold text-gray-800">GI? HÀNG</span>
+          </div>
+          <div className="w-20 h-1 bg-sky-400 mb-8"></div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-sky-400 text-white flex items-center justify-center font-bold mb-2">2</div>
+            <span className="text-sm font-semibold text-gray-800">CHI TI?T THANH TOÁN</span>
+          </div>
+          <div className="w-20 h-1 bg-gray-300 mb-8"></div>
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold mb-2">3</div>
+            <span className="text-sm text-gray-400">THANH TOÁN THÀNH CÔNG</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pb-12">
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+                <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faTruck} className="text-sky-500" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Thông tin giao hàng</h2>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-400" />
+                    H? và tên *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.fullName}
+                    onChange={(e) => handleChange('fullName', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                    placeholder="Nh?p h? và tên"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FontAwesomeIcon icon={faPhone} className="mr-2 text-gray-400" />
+                    S? di?n tho?i *
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                    placeholder="Nh?p s? di?n tho?i"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-gray-400" />
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                    placeholder="Nh?p email"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2 text-gray-400" />
+                    Ð?a ch? c? th? *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => handleChange('address', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                    placeholder="S? nhà, tên du?ng..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">T?nh/Thành ph? *</label>
+                  <select
+                    value={formData.city}
+                    onChange={(e) => handleChange('city', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                  >
+                    <option value="">Ch?n T?nh/Thành ph?</option>
+                    <option value="hanoi">Hà N?i</option>
+                    <option value="hcm">TP. H? Chí Minh</option>
+                    <option value="danang">Ðà N?ng</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Qu?n/Huy?n *</label>
+                  <select
+                    value={formData.district}
+                    onChange={(e) => handleChange('district', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                  >
+                    <option value="">Ch?n Qu?n/Huy?n</option>
+                    <option value="cau-giay">C?u Gi?y</option>
+                    <option value="dong-da">Ð?ng Ða</option>
+                    <option value="hai-ba-trung">Hai Bà Trung</option>
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phu?ng/Xã *</label>
+                  <select
+                    value={formData.ward}
+                    onChange={(e) => handleChange('ward', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none"
+                  >
+                    <option value="">Ch?n Phu?ng/Xã</option>
+                    <option value="dich-vong">D?ch V?ng</option>
+                    <option value="dich-vong-hau">D?ch V?ng H?u</option>
+                    <option value="mai-dich">Mai D?ch</option>
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ghi chú don hàng</label>
+                  <textarea
+                    value={formData.note}
+                    onChange={(e) => handleChange('note', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:border-transparent outline-none resize-none"
+                    placeholder="Ghi chú v? don hàng..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faCreditCard} className="text-green-500" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Phuong th?c thanh toán</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`border-2 rounded-lg p-5 cursor-pointer transition-all ${
+                    paymentMethod === 'cod' ? 'border-sky-400 bg-sky-50' : 'border-gray-200 hover:border-sky-200'
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 mt-1">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        paymentMethod === 'cod' ? 'border-sky-400' : 'border-gray-300'
+                      }`}>
+                        {paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-sky-400"></div>}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <FontAwesomeIcon icon={faMoneyBill} className="text-green-500 text-xl" />
+                        <h3 className="font-semibold text-gray-800">Thanh toán khi nh?n hàng (COD)</h3>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Quý khách s? thanh toán b?ng ti?n m?t khi nh?n du?c hàng t? nhân viên giao hàng
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => setPaymentMethod('vnpay')}
+                  className={`border-2 rounded-lg p-5 cursor-pointer transition-all ${
+                    paymentMethod === 'vnpay' ? 'border-sky-400 bg-sky-50' : 'border-gray-200 hover:border-sky-200'
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 mt-1">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                        paymentMethod === 'vnpay' ? 'border-sky-400' : 'border-gray-300'
+                      }`}>
+                        {paymentMethod === 'vnpay' && <div className="w-3 h-3 rounded-full bg-sky-400"></div>}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <FontAwesomeIcon icon={faCreditCard} className="text-blue-500 text-xl" />
+                        <h3 className="font-semibold text-gray-800">Chuy?n kho?n ngân hàng (VNPAY QR)</h3>
+                        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded">S?p ra m?t</span>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Quét mã QR d? thanh toán nhanh chóng qua ?ng d?ng ngân hàng (tính nang dang phát tri?n)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+              <h2 className="text-xl font-bold text-gray-800 mb-6 pb-3 border-b">Ðon hàng c?a b?n</h2>
+
+              <div className="space-y-4 mb-6 pb-6 border-b">
+                {cartItems.map((item) => (
+                  <div key={item.id} className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">{item.name}</h3>
+                      <p className="text-xs text-gray-500">S? lu?ng: {item.quantity}</p>
+                    </div>
+                    <span className="text-sm font-semibold text-gray-800 ml-3">
+                      {formatPrice(item.price * item.quantity)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between text-gray-700">
+                  <span>T?m tính</span>
+                  <span className="font-semibold">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-gray-700">
+                  <span>Phí v?n chuy?n</span>
+                  <span className="font-semibold">{formatPrice(shippingFee)}</span>
+                </div>
+                <div className="border-t pt-3 flex justify-between text-lg font-bold text-gray-900">
+                  <span>T?ng c?ng</span>
+                  <span className="text-orange-500">{formatPrice(total)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-gradient-to-r from-sky-400 to-blue-500 text-white py-3 rounded-lg font-semibold hover:from-sky-500 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Ð?T HÀNG
+              </button>
+
+              <button
+                onClick={() => window.history.back()}
+                className="w-full mt-3 border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+              >
+                Quay l?i gi? hàng
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+

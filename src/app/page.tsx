@@ -119,6 +119,7 @@ export default function HomePage() {
 
   return (
     <div className="w-full flex flex-col items-center overflow-hidden">
+      {/* Advanced Floating Decorations - THÊM VÀO SAU PHẦN Floating Decorations CŨ */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Bóng bay bay lơ lửng */}
         <div className="absolute top-20 left-10 w-16 h-20 animate-float" style={{ animationDelay: '0s', animationDuration: '6s' }}>
@@ -188,6 +189,7 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* CSS Animations - THÊM VÀO CUỐI FILE, TRONG <style> TAG */}
       <style jsx>{`
         /* Bóng bay bay lơ lửng lên xuống */
         @keyframes float {
@@ -352,7 +354,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Books Section */}
+      {/* Featured Books Section - THIẾT KẾ NỔI BẬT */}
       {showcaseData?.featured && showcaseData.featured.length > 0 && (
         <section className="w-full py-20 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden">
                     {/* Decorative Elements */}
@@ -434,7 +436,7 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Bestseller Books Section*/}
+      {/* Bestseller Books Section - THIẾT KẾ HOT */}
       {showcaseData?.bestseller && showcaseData.bestseller.length > 0 && (
         <section className="w-full py-20 bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 relative overflow-hidden">
           {/* Decorative Elements */}
@@ -536,7 +538,7 @@ export default function HomePage() {
         </section>
       )}
 
-     {/* Promotion Books Section*/}
+     {/* Promotion Books Section - REDESIGNED */}
       {showcaseData?.promotion && showcaseData.promotion.length > 0 && (
         <section className="w-full py-20 bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 relative overflow-hidden">
           {/* Decorative Elements */}

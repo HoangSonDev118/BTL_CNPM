@@ -30,7 +30,7 @@ async function main() {
   console.log("🔐 Mật khẩu mới (tạm thời):", newPassword);
   console.log("🔑 Hash (preview):", newHash.substring(0, 50) + "...");
 
-  const email = "ndt060402004@gmail.com";
+  const email = "ndt06042004@gmail.com";
 
   const updated = await prisma.user.update({
     where: { email },
