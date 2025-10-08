@@ -54,6 +54,21 @@ const Header = () => {
         ]
       : [];
 
+  const userMenuItems: MenuProps["items"] =
+    user && user.role === "USER"
+      ? [
+          {
+            key: "user-profile",
+            icon: <FontAwesomeIcon icon={faUser} />,
+            label: (
+              <Link className="text-[15px]" href="/profile">
+                Thông tin cá nhân & Đơn hàng
+              </Link>
+            ),
+          },
+        ]
+      : [];
+
   const accountMenu: MenuProps["items"] = user
     ? [
         {
@@ -66,6 +81,7 @@ const Header = () => {
           ),
           disabled: true,
         },
+        ...userMenuItems,
         ...adminMenuItems,
         { type: "divider" as const },
         {
@@ -184,10 +200,12 @@ const Header = () => {
 
               {/* Shopping Cart */}
               <div className="flex-shrink-0">
-                <FontAwesomeIcon
-                  icon={faBagShopping}
-                  className="text-xl lg:text-2xl cursor-pointer hover:text-[#96C8DD] transition-colors"
-                />
+                <Link href="/cart">
+                  <FontAwesomeIcon
+                    icon={faBagShopping}
+                    className="text-xl lg:text-2xl cursor-pointer hover:text-[#96C8DD] transition-colors"
+                  />
+                </Link>
               </div>
 
               {/* Mobile Menu Button */}
