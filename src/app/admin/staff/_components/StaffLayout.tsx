@@ -16,7 +16,10 @@ import {
   MenuUnfoldOutlined,
   BellOutlined,
 } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDarkMode } from "@/contexts/DarkModeContext";
 
 const { Header, Sider, Content } = Layout;
 
@@ -29,6 +32,7 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const handleLogout = async () => {
     try {
@@ -92,8 +96,9 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
           left: 0,
           top: 0,
           bottom: 0,
-          background: "#fff",
+          background: isDarkMode ? "#1a1d2e" : "#fff",
           boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          transition: "background 0.3s",
         }}
       >
         <div
@@ -102,7 +107,7 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderBottom: "1px solid #f0f0f0",
+            borderBottom: isDarkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #f0f0f0",
           }}
         >
           {!collapsed ? (
@@ -121,21 +126,23 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
           selectedKeys={[pathname]}
           items={menuItems}
           style={{ borderRight: 0, marginTop: 16 }}
+          theme={isDarkMode ? "dark" : "light"}
         />
       </Sider>
       <Layout style={{ marginLeft: collapsed ? 80 : 200, transition: "all 0.2s" }}>
         <Header
           style={{
             padding: "0 24px",
-            background: "#fff",
+            background: isDarkMode ? "#1a1d2e" : "#fff",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            borderBottom: "1px solid #f0f0f0",
+            borderBottom: isDarkMode ? "1px solid rgba(255,255,255,0.1)" : "1px solid #f0f0f0",
             position: "sticky",
             top: 0,
             zIndex: 1,
             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            transition: "background 0.3s",
           }}
         >
           <Button
@@ -146,14 +153,35 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
               fontSize: "16px",
               width: 40,
               height: 40,
+              color: isDarkMode ? "#d1d5db" : undefined,
             }}
           />
           <div style={{ display: "flex", alignItems: "center", gap: 16, whiteSpace: "nowrap", overflow: "hidden", flexShrink: 0, maxWidth: "100%", height: 40 }}>
+            {/* Dark Mode Toggle */}
+            <Button
+              type="text"
+              icon={<FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />}
+              onClick={toggleDarkMode}
+              style={{ 
+                width: 40, 
+                height: 40, 
+                minWidth: 40,
+                fontSize: 18,
+                color: isDarkMode ? "#fbbf24" : "#64748b",
+              }}
+              title={isDarkMode ? "Chế độ sáng" : "Chế độ tối"}
+            />
+            
             <Badge count={3} size="small">
               <Button
                 type="text"
                 icon={<BellOutlined style={{ fontSize: 18 }} />}
-                style={{ width: 40, height: 40, minWidth: 40 }}
+                style={{ 
+                  width: 40, 
+                  height: 40, 
+                  minWidth: 40,
+                  color: isDarkMode ? "#d1d5db" : undefined,
+                }}
               />
             </Badge>
             <Dropdown
@@ -180,7 +208,7 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
                   height: 40,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#f5f5f5";
+                  e.currentTarget.style.background = isDarkMode ? "rgba(255,255,255,0.1)" : "#f5f5f5";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = "transparent";
@@ -195,7 +223,15 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
                   <div style={{ display: "flex", flexDirection: "column", maxWidth: 120, minWidth: 0, lineHeight: 1 }}>
                     <span
                       title={user?.name}
-                      style={{ fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", lineHeight: 1 }}
+                      style={{ 
+                        fontSize: 14, 
+                        fontWeight: 500, 
+                        whiteSpace: "nowrap", 
+                        overflow: "hidden", 
+                        textOverflow: "ellipsis", 
+                        lineHeight: 1,
+                        color: isDarkMode ? "#d1d5db" : undefined,
+                      }}
                     >
                       {user?.name}
                     </span>
@@ -211,7 +247,8 @@ export default function StaffLayout({ children }: StaffLayoutProps) {
             margin: "24px 16px",
             padding: 24,
             minHeight: 280,
-            background: "#f5f5f9",
+            background: isDarkMode ? "#16192b" : "#f5f5f9",
+            transition: "background 0.3s",
           }}
         >
           {children}

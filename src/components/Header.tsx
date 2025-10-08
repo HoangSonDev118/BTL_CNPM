@@ -17,8 +17,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "@/contexts/AuthContext";
+import SearchComponent from './SearchComponent';
 
-const { Search } = Input;
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -161,12 +161,7 @@ const Header = () => {
 
             {/* Search Bar - Hidden on mobile */}
             <div className="hidden md:block flex-1 max-w-[500px] lg:max-w-[600px]">
-              <Search
-                addonBefore={<FontAwesomeIcon icon={faSearch} />}
-                placeholder="Nhập để tìm kiếm sản phẩm của bạn"
-                enterButton="Tìm kiếm"
-                size="large"
-              />
+              <SearchComponent size="large" showIcon={true} />
             </div>
 
             {/* Right Side Actions */}
@@ -221,12 +216,7 @@ const Header = () => {
 
           {/* Mobile Search Bar */}
           <div className="md:hidden pb-4">
-            <Search
-              addonBefore={<FontAwesomeIcon icon={faSearch} />}
-              placeholder="Tìm kiếm sản phẩm"
-              enterButton="Tìm"
-              size="middle"
-            />
+            <SearchComponent size="medium" showIcon={true} />
           </div>
         </div>
       </div>

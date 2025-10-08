@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String     @id @default(uuid())
   name         String
-  email        String   @unique
+  email        String     @unique
   phone        String?
   passwordHash String
-  createdAt    DateTime @default(now())
-  role         Role     @default(USER)
+  createdAt    DateTime   @default(now())
+  role         Role       @default(USER)
   reviews      Review[]
   orders       Order[]
+  favorites    Favorite[] // Thêm relation này
 }
 
 model Category {
@@ -68,6 +69,7 @@ model Book {
   images        BookImage[]
   reviews       Review[]
   orderItems    OrderItem[]
+  favorites     Favorite[]  // Thêm relation này
 
   @@index([slug])
   @@index([categoryId])
@@ -105,6 +107,21 @@ model Review {
   @@index([bookId])
   @@index([userId])
   @@map("reviews")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@map("favorites")
 }
 
 model Order {

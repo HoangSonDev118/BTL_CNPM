@@ -12,6 +12,10 @@ import {
   faLock,
   faShoppingBag,
   faChevronRight,
+  faHeart,
+  faTrash,
+  faShoppingCart,
+  faStar,
 } from "@fortawesome/free-solid-svg-icons";
 import { useToast, ToastContainer } from "@/components/Toast";
 
@@ -40,6 +44,27 @@ type Order = {
   }[];
 };
 
+type FavoriteBook = {
+  id: string;
+  title: string;
+  slug: string;
+  coverImage: string | null;
+  price: string;
+  originalPrice: string | null;
+  author: {
+    id: string;
+    name: string;
+  };
+  category: {
+    id: string;
+    name: string;
+  };
+  soldCount: number;
+  viewCount: number;
+  isFeatured: boolean;
+  addedAt: string;
+};
+
 const ProfilePage = () => {
   const router = useRouter();
   const { user, loading: authLoading, refresh } = useAuth();
@@ -50,12 +75,10 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [favorites, setFavorites] = useState<FavoriteBook[]>([]);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
+  const [removingFavorite, setRemovingFavorite] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
-
-  // Debug log
-  useEffect(() => {
-    console.log("Current toasts:", toasts);
-  }, [toasts]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -77,6 +100,8 @@ const ProfilePage = () => {
   useEffect(() => {
     if (activeTab === "orders") {
       fetchOrders();
+    } else if (activeTab === "favorites") {
+      fetchFavorites();
     }
   }, [activeTab]);
 
@@ -99,6 +124,51 @@ const ProfilePage = () => {
     }
   };
 
+  const fetchFavorites = async () => {
+    try {
+      setLoadingFavorites(true);
+      const response = await fetch("/api/user/favorites");
+      
+      if (!response.ok) {
+        throw new Error("Không thể tải danh sách yêu thích");
+      }
+
+      const data = await response.json();
+      setFavorites(data.favorites || []);
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      toast.error("Không thể tải danh sách yêu thích");
+    } finally {
+      setLoadingFavorites(false);
+    }
+  };
+
+  const handleRemoveFavorite = async (bookId: string) => {
+    try {
+      setRemovingFavorite(bookId);
+      const response = await fetch(`/api/user/favorites/${bookId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Không thể xóa khỏi danh sách yêu thích");
+      }
+
+      setFavorites((prev) => prev.filter((book) => book.id !== bookId));
+      toast.success("Đã xóa khỏi danh sách yêu thích");
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+      toast.error("Không thể xóa khỏi danh sách yêu thích");
+    } finally {
+      setRemovingFavorite(null);
+    }
+  };
+
+  const handleAddToCart = (book: FavoriteBook) => {
+    // TODO: Implement add to cart functionality
+    toast.success(`Đã thêm "${book.title}" vào giỏ hàng`);
+  };
+
   const handleUpdateProfile = async (values: ProfileFormValues) => {
     try {
       setLoading(true);
@@ -110,18 +180,15 @@ const ProfilePage = () => {
       });
 
       const data = await response.json();
-      console.log("Update Profile Response:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Cập nhật thất bại");
       }
 
       await refresh();
-      console.log("About to show success toast");
       toast.success(data.message || "Cập nhật thông tin thành công!");
     } catch (error) {
       const err = error as Error;
-      console.log("Update Profile Error:", err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
@@ -142,29 +209,34 @@ const ProfilePage = () => {
       });
 
       const data = await response.json();
-      console.log("Change Password Response:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Đổi mật khẩu thất bại");
       }
 
-      console.log("About to show success toast");
       toast.success(data.message || "Đổi mật khẩu thành công!");
       passwordForm.resetFields();
     } catch (error) {
       const err = error as Error;
-      console.log("Change Password Error:", err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | string) => {
+    const numPrice = typeof price === "string" ? parseFloat(price) : price;
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
-    }).format(price);
+    }).format(numPrice);
+  };
+
+  const calculateRating = (soldCount: number, viewCount: number) => {
+    const baseRating = 4.0;
+    const soldFactor = Math.min(soldCount / 100, 0.8);
+    const viewFactor = Math.min(viewCount / 1000, 0.2);
+    return Math.min(baseRating + soldFactor + viewFactor, 5.0);
   };
 
   const getStatusColor = (status: string) => {
@@ -361,6 +433,183 @@ const ProfilePage = () => {
       ),
     },
     {
+      key: "favorites",
+      label: (
+        <span className="flex items-center gap-2 text-base">
+          <FontAwesomeIcon icon={faHeart} />
+          Sản phẩm yêu thích
+          {favorites.length > 0 && (
+            <span className="ml-1 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">
+              {favorites.length}
+            </span>
+          )}
+        </span>
+      ),
+      children: (
+        <div>
+          {loadingFavorites ? (
+            <div className="flex justify-center py-12">
+              <Spin size="large" />
+            </div>
+          ) : favorites.length === 0 ? (
+            <Empty
+              description={
+                <div className="text-center">
+                  <p className="text-lg font-medium mb-2">Chưa có sản phẩm yêu thích</p>
+                  <p className="text-gray-500">
+                    Khám phá và thêm những cuốn sách yêu thích của bạn
+                  </p>
+                </div>
+              }
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            >
+              <Button
+                type="primary"
+                onClick={() => router.push("/books")}
+                className="mt-4"
+                icon={<FontAwesomeIcon icon={faShoppingBag} />}
+              >
+                Khám phá sách
+              </Button>
+            </Empty>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {favorites.map((book) => {
+                const rating = calculateRating(book.soldCount, book.viewCount);
+                const discount = book.originalPrice
+                  ? Math.round(
+                      ((parseFloat(book.originalPrice) - parseFloat(book.price)) /
+                        parseFloat(book.originalPrice)) *
+                        100
+                    )
+                  : 0;
+
+                return (
+                  <Card
+                    key={book.id}
+                    className="shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                    bodyStyle={{ padding: 0 }}
+                  >
+                    <div className="relative">
+                      {/* Book Image */}
+                      <div className="relative overflow-hidden">
+                        <a href={`/books/${book.slug}`}>
+                          <img
+                            src={book.coverImage || "/placeholder-book.png"}
+                            alt={book.title}
+                            className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        </a>
+
+                        {/* Discount Badge */}
+                        {discount > 0 && (
+                          <div className="absolute top-3 left-3 bg-red-500 text-white font-bold px-2.5 py-1 rounded shadow-lg">
+                            <span className="text-xs">-{discount}%</span>
+                          </div>
+                        )}
+
+                        {/* Featured Badge */}
+                        {book.isFeatured && (
+                          <div className="absolute top-3 right-3 bg-amber-500 text-white font-bold px-2.5 py-1 rounded shadow-lg flex items-center gap-1">
+                            <FontAwesomeIcon icon={faStar} className="text-xs" />
+                            <span className="text-xs">Nổi bật</span>
+                          </div>
+                        )}
+
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => handleRemoveFavorite(book.id)}
+                          disabled={removingFavorite === book.id}
+                          className="absolute top-3 right-3 bg-white/90 hover:bg-red-500 text-red-500 hover:text-white w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 opacity-0 group-hover:opacity-100"
+                        >
+                          {removingFavorite === book.id ? (
+                            <Spin size="small" />
+                          ) : (
+                            <FontAwesomeIcon icon={faTrash} className="text-sm" />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Book Info */}
+                      <div className="p-4 space-y-3">
+                        <a
+                          href={`/books/${book.slug}`}
+                          className="block hover:text-sky-600 transition-colors"
+                        >
+                          <h3 className="font-bold text-base line-clamp-2 min-h-[3rem]">
+                            {book.title}
+                          </h3>
+                        </a>
+
+                        <p className="text-sm text-gray-600">
+                          <FontAwesomeIcon icon={faUser} className="mr-1 text-xs" />
+                          {book.author.name}
+                        </p>
+
+                        {/* Rating */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex text-amber-500">
+                            {Array.from({ length: Math.floor(rating) }).map((_, idx) => (
+                              <FontAwesomeIcon key={idx} icon={faStar} className="text-xs" />
+                            ))}
+                            {rating % 1 !== 0 && (
+                              <FontAwesomeIcon icon={faStar} className="text-xs opacity-50" />
+                            )}
+                          </div>
+                          <span className="text-xs text-gray-500">{rating.toFixed(1)}</span>
+                        </div>
+
+                        {/* Price */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl font-bold text-orange-500">
+                            {formatPrice(book.price)}
+                          </span>
+                          {book.originalPrice && (
+                            <span className="text-sm text-gray-400 line-through">
+                              {formatPrice(book.originalPrice)}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-2">
+                          <Button
+                            type="primary"
+                            icon={<FontAwesomeIcon icon={faShoppingCart} />}
+                            onClick={() => handleAddToCart(book)}
+                            className="flex-1 h-10 font-semibold"
+                          >
+                            Thêm vào giỏ
+                          </Button>
+                          <Button
+                            type="default"
+                            onClick={() => router.push(`/books/${book.slug}`)}
+                            className="h-10"
+                          >
+                            <FontAwesomeIcon icon={faChevronRight} />
+                          </Button>
+                        </div>
+
+                        {/* Added Date */}
+                        <p className="text-xs text-gray-400 text-center pt-2 border-t">
+                          Đã thêm:{" "}
+                          {new Date(book.addedAt).toLocaleDateString("vi-VN", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "orders",
       label: (
         <span className="flex items-center gap-2 text-base">
@@ -453,7 +702,7 @@ const ProfilePage = () => {
       <ToastContainer toasts={toasts} onClose={closeToast} />
       
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="bg-gradient-to-r from-sky-400 to-blue-400 text-white rounded-2xl p-8 mb-8 shadow-lg">
             <div className="flex items-center gap-4">
