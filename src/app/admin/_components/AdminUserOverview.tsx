@@ -40,7 +40,7 @@ export default function AdminUserOverview() {
 
         if (!response.ok) {
           const data = await response.json().catch(() => ({}));
-          const message = (data as { message?: string }).message ?? "Không thể tải dữ liệu";
+          const message = (data as { message?: string }).message ?? "Có cáic con cặc";
           throw new Error(message);
         }
 

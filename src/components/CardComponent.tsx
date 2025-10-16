@@ -29,7 +29,7 @@ type HeartOutlineIconProps = {
   className?: string;
   style?: React.CSSProperties;
 };
-
+// Sơn ngu
 const HeartOutlineIcon: React.FC<HeartOutlineIconProps> = ({ className = '', style }) => (
   <svg
     aria-hidden="true"
@@ -77,7 +77,7 @@ const accentStyles: Record<NonNullable<ProductCard['accent']>, { glow: string; b
 const fallbackProduct: ProductCard = {
   id: 'fallback-product',
   slug: 'fallback-product',
-  title: 'Wonderella - Bộ 4 cuốn tác giả Alicia Vu',
+  title: 'Wonderella - Bộ 1000 cuốn tác giả Alicia Vu',
   image: 'https://pos.nvncdn.com/5679e9-27451/ps/20240802_pU1MWRnInV.jpeg?v=1722566740',
   price: '640.000 đ',
   originalPrice: '820.000 đ',
@@ -204,7 +204,6 @@ const CardComponent: React.FC<CardComponentProps> = ({
           </div>
         </div>
       )}
-
       <a
         href={`/books/${product.slug}`}
         className={`group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-white/40 bg-white/80 p-4 text-[#2f2f2f] shadow-[0_25px_50px_-25px_rgba(15,23,42,0.35)] backdrop-blur-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_35px_55px_-25px_rgba(14,116,144,0.45)] ${className}`}
